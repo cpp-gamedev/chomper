@@ -1,8 +1,7 @@
 #include "chomper/player.hpp"
-#include "chomper/game.hpp"
 
 namespace chomper {
-Player::Player(klib::TypedLogger<Game>& logger, le::input::ScopedActionMapping& mapping) : m_log(logger) {
+Player::Player(le::input::ScopedActionMapping& mapping) {
 	createController(mapping);
 }
 
