@@ -35,6 +35,6 @@ class IController : public klib::Polymorphic {
 class IController::IListener : public klib::Polymorphic {
   public:
 	// called whenever observed controller decides to set the heading.
-	virtual void on_set_heading(Heading heading) = 0;
+	virtual void onSetHeading(Heading heading) = 0;
 };
 } // namespace chomper

@@ -15,7 +15,7 @@ class Game : public IRuntime, public IController::IListener, public klib::Pinned
   private:
 	// all Game-level input actions.
 	struct Actions {
-		le::input::action::KeyDigital go_back_key{GLFW_KEY_ESCAPE};
+		le::input::action::KeyDigital goBackKey{GLFW_KEY_ESCAPE};
 	};
 
 	// IRuntime
@@ -23,12 +23,12 @@ class Game : public IRuntime, public IController::IListener, public klib::Pinned
 	void render(le::IRenderer& renderer) const final;
 
 	// IController::IListener
-	void on_set_heading(Heading heading) final;
+	void onSetHeading(Heading heading) final;
 
-	void create_controller();
-	void bind_actions();
+	void createController();
+	void bindActions();
 
-	void on_go_back();
+	void onGoBack();
 
 	klib::TypedLogger<Game> m_log{};
 
