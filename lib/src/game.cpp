@@ -6,17 +6,23 @@
 namespace chomper {
 using ActionValue = le::input::action::Value;
 
-Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine->get_input_router()) { create_controller(); }
+Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine->get_input_router()) {
+	create_controller();
+}
 
 void Game::tick(kvf::Seconds const /*dt*/) {
-	if (ImGui::Begin("Debug")) { ImGui::TextUnformatted(klib::FixedString{"Heading: {}", heading_name_v[m_heading]}.c_str()); }
+	if (ImGui::Begin("Debug")) {
+		ImGui::TextUnformatted(klib::FixedString{"Heading: {}", heading_name_v[m_heading]}.c_str());
+	}
 	ImGui::End();
 }
 
 void Game::render(le::IRenderer& /*renderer*/) const {}
 
 void Game::on_set_heading(Heading const heading) {
-	if (heading == m_heading) { return; }
+	if (heading == m_heading) {
+		return;
+	}
 	m_log.debug("changing heading from {} to {}", heading_name_v[m_heading], heading_name_v[heading]);
 	m_heading = heading;
 }
@@ -36,9 +42,13 @@ void Game::bind_actions() {
 	// go_back_key is separated from PlayerController so that it works regardless of the type of controller in use.
 	// this implies that all actions must share the same mapping to be active simultaneously.
 	m_mapping.bind_action(&m_actions.go_back_key, [this](ActionValue const v) {
-		if (v.get<bool>()) { on_go_back(); }
+		if (v.get<bool>()) {
+			on_go_back();
+		}
 	});
 }
 
-void Game::on_go_back() { m_log.debug("execute 'go back' action here"); }
+void Game::on_go_back() {
+	m_log.debug("execute 'go back' action here");
+}
 } // namespace chomper

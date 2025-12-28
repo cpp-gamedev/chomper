@@ -34,12 +34,16 @@ void Engine::run() {
 	}
 }
 
-void Engine::create_data_loader(std::string_view const assets_dir) { m_data_loader = std::make_unique<le::FileDataLoader>(assets_dir); }
+void Engine::create_data_loader(std::string_view const assets_dir) {
+	m_data_loader = std::make_unique<le::FileDataLoader>(assets_dir);
+}
 
 void Engine::create_context(CreateInfo const& create_info) {
 	auto const platform_flags = [&] {
 		auto ret = le::PlatformFlag::None;
-		if (create_info.no_libdecor) { ret |= le::PlatformFlag::NoLibdecor; }
+		if (create_info.no_libdecor) {
+			ret |= le::PlatformFlag::NoLibdecor;
+		}
 		return ret;
 	}();
 	auto const window_title = std::format("chomper {}", build_version_str);
