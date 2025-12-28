@@ -1,23 +1,35 @@
 #include "chomper/engine.hpp"
 #include "chomper/build_version.hpp"
-#include <imgui.h>
+#include "chomper/game.hpp"
 #include <le2d/file_data_loader.hpp>
 
 namespace chomper {
 Engine::Engine(CreateInfo const& create_info) {
 	create_data_loader(create_info.assets_dir);
 	create_context(create_info);
+	create_runtime();
 
-	m_log.info("Engine created");
+	m_log.info("created");
 }
 
 void Engine::run() {
+	auto delta_time = kvf::DeltaTime{};
+	m_log.info("starting game loop");
 	while (m_context->is_running()) {
+		// initialize next frame.
 		m_context->next_frame();
+
+		// dispatch events and tick runtime.
+		auto const dt = delta_time.tick();
+		m_input_router.dispatch(m_context->event_queue());
+		m_runtime->tick(dt);
+
+		// render runtime.
 		auto& renderer = m_context->begin_render();
-		// TODO
+		m_runtime->render(renderer);
 		renderer.end_render();
-		ImGui::ShowDemoWindow();
+
+		// submit frame for presentation.
 		m_context->present();
 	}
 }
@@ -45,5 +57,10 @@ void Engine::create_context(CreateInfo const& create_info) {
 	m_context = le::Context::create(context_ci);
 	m_context->lock_aspect_ratio(true);
 	m_context->set_visible(true);
+}
+
+void Engine::create_runtime() {
+	// Game stores 'this', so Engine must remain address-stable. this is why it inherits from Pinned.
+	m_runtime = std::make_unique<Game>(this);
 }
 } // namespace chomper
