@@ -1,12 +1,14 @@
+#include "chomper/build_version.hpp"
+#include "chomper/engine.hpp"
 #include <klib/args/parse.hpp>
 #include <klib/assert.hpp>
 #include <klib/log.hpp>
 #include <array>
-#include "chomper/build_version.hpp"
-#include "chomper/engine.hpp"
 
 namespace chomper {
 namespace {
+auto const log = klib::TaggedLogger{"chomper"};
+
 auto run(int const argc, char const* const* argv) -> int {
 	auto engine_ci = Engine::CreateInfo{};
 	auto const parse_info = klib::args::ParseInfo{.version = build_version_str};
@@ -17,8 +19,12 @@ auto run(int const argc, char const* const* argv) -> int {
 	auto const parse_result = klib::args::parse_main(parse_info, args, argc, argv);
 	if (parse_result.early_return()) { return parse_result.get_return_code(); }
 
+	log.info("chomper {}", chomper::build_version_str);
+
 	auto engine = Engine{engine_ci};
 	engine.run();
+
+	log.info("shutting down");
 
 	return EXIT_SUCCESS;
 }
@@ -26,15 +32,14 @@ auto run(int const argc, char const* const* argv) -> int {
 } // namespace chomper
 
 auto main(int argc, char** argv) -> int {
-	auto const log_file = klib::log::File{"space-rogue.log"};
-	auto const log = klib::TaggedLogger{"chomper"};
+	auto const log_file = klib::log::File{"chomper.log"};
 	try {
 		chomper::run(argc, argv);
 	} catch (std::exception const& e) {
-		log.error("PANIC: {}", e.what());
+		chomper::log.error("PANIC: {}", e.what());
 		return EXIT_FAILURE;
 	} catch (...) {
-		log.error("PANIC!");
+		chomper::log.error("PANIC!");
 		return EXIT_FAILURE;
 	}
 }
