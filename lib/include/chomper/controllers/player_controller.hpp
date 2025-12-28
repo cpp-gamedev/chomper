@@ -19,9 +19,9 @@ class PlayerController : public IController {
 
 	void tick(kvf::Seconds dt) final;
 
-	void create_turn_actions();
-	void bind_actions(le::input::ActionMapping& mapping);
+	void createTurnActions();
+	void bindActions(le::input::ActionMapping& mapping);
 
-	TurnActions m_turn_actions{};
+	TurnActions m_turnActions{};
 };
 } // namespace chomper
