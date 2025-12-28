@@ -16,10 +16,18 @@ class Engine : public klib::Pinned {
 
 	explicit Engine(CreateInfo const& create_info);
 
-	[[nodiscard]] auto get_data_loader() const -> le::IDataLoader const& { return *m_data_loader; }
-	[[nodiscard]] auto get_context() const -> le::Context const& { return *m_context; }
-	[[nodiscard]] auto get_input_router() const -> le::input::Router const& { return m_input_router; }
-	[[nodiscard]] auto get_input_router() -> le::input::Router& { return m_input_router; }
+	[[nodiscard]] auto get_data_loader() const -> le::IDataLoader const& {
+		return *m_data_loader;
+	}
+	[[nodiscard]] auto get_context() const -> le::Context const& {
+		return *m_context;
+	}
+	[[nodiscard]] auto get_input_router() const -> le::input::Router const& {
+		return m_input_router;
+	}
+	[[nodiscard]] auto get_input_router() -> le::input::Router& {
+		return m_input_router;
+	}
 
 	void run();
 

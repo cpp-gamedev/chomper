@@ -8,7 +8,13 @@
 
 namespace chomper {
 // represents a direction.
-enum class Heading : std::int8_t { East, North, West, South, COUNT_ };
+enum class Heading : std::int8_t {
+	East,
+	North,
+	West,
+	South,
+	COUNT_
+};
 constexpr auto heading_name_v = klib::EnumArray<Heading, std::string_view>{"East", "North", "West", "South"};
 
 // Heading controller interface.

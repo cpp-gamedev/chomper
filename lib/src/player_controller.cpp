@@ -29,7 +29,9 @@ void PlayerController::tick(kvf::Seconds const /*dt*/) {}
 void PlayerController::create_turn_actions() {
 	for (auto const& turn_inputs : default_turn_inputs) {
 		auto& turn_action = m_turn_actions[turn_inputs.heading];
-		for (auto const key : turn_inputs.keys) { turn_action.push_back(std::make_unique<KeyDigital>(key)); }
+		for (auto const key : turn_inputs.keys) {
+			turn_action.push_back(std::make_unique<KeyDigital>(key));
+		}
 	}
 }
 
@@ -38,9 +40,13 @@ void PlayerController::bind_actions(le::input::ActionMapping& mapping) {
 		// we're storing callbacks that capture 'this' into an external (non-owned) mapping.
 		// the actual owner MUST be responsible for clearing these mappings when 'this' is destroyed.
 		auto const on_action = [this, heading](ActionValue const v) {
-			if (m_listener && v.get<bool>()) { m_listener->on_set_heading(heading); }
+			if (m_listener && v.get<bool>()) {
+				m_listener->on_set_heading(heading);
+			}
 		};
-		for (auto const& key : m_turn_actions[heading]) { mapping.bind_action(key.get(), on_action); }
+		for (auto const& key : m_turn_actions[heading]) {
+			mapping.bind_action(key.get(), on_action);
+		}
 	}
 }
 } // namespace chomper
