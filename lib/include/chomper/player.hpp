@@ -1,11 +1,10 @@
 #pragma once
 #include "chomper/controllers/player_controller.hpp"
+#include <imgui.h>
 #include <klib/log.hpp>
-#include <le2d/renderer.hpp>
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
-#include <imgui.h>
-
+#include <le2d/renderer.hpp>
 
 namespace chomper {
 
@@ -29,6 +28,5 @@ class Player : public IController::IListener {
 	std::unique_ptr<IController> m_controller{};
 
 	Heading m_heading{};
-	  
 };
 } // namespace chomper

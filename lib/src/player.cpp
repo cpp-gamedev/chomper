@@ -16,7 +16,7 @@ void Player::tick(kvf::Seconds dt) {
 	ImGui::End();
 }
 
-void Player::render(le::IRenderer& renderer) const {
+void Player::render(le::IRenderer& /*renderer*/) const {
 	// TODO
 }
 

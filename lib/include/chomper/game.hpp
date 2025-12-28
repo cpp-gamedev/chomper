@@ -1,7 +1,7 @@
 #pragma once
 #include "chomper/engine.hpp"
-#include "chomper/runtime.hpp"
 #include "chomper/player.hpp"
+#include "chomper/runtime.hpp"
 #include <klib/ptr.hpp>
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
