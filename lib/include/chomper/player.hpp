@@ -7,12 +7,9 @@
 #include <le2d/renderer.hpp>
 
 namespace chomper {
-
-class Game;
-
 class Player : public IController::IListener {
   public:
-	explicit Player(klib::TypedLogger<Game>& logger, le::input::ScopedActionMapping& mapping);
+	explicit Player(le::input::ScopedActionMapping& mapping);
 
 	void tick(kvf::Seconds dt);
 	void render(le::IRenderer& renderer) const;
@@ -23,7 +20,7 @@ class Player : public IController::IListener {
 
 	void createController(le::input::ScopedActionMapping& mapping);
 
-	klib::TypedLogger<Game>& m_log;
+	klib::TypedLogger<Player> m_log{};
 
 	std::unique_ptr<IController> m_controller{};
 
