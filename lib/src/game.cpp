@@ -27,7 +27,7 @@ void Game::bindActions() {
 }
 
 void Game::createPlayer() {
-	// clear bindings that may point to dangling actions after existing plyer gets destroyed.
+	// clear bindings that may point to dangling actions after existing player gets destroyed.
 	m_mapping.clear_bindings();
 	// rebind game actions.
 	bindActions();
