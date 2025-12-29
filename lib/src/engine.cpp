@@ -8,8 +8,10 @@ namespace chomper {
 Engine::Engine(CreateInfo const& createInfo) {
 	createDataLoader(createInfo.assetsDir);
 	createContext(createInfo);
+	createResources();
 	createRuntime();
 
+	m_context->set_visible(true);
 	m_log.info("created");
 }
 
@@ -62,8 +64,11 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		.window = windowInfo,
 	};
 	m_context = le::Context::create(contextCI);
-	m_context->lock_aspect_ratio(true);
-	m_context->set_visible(true);
+}
+
+void Engine::createResources() {
+	auto assetLoader = m_context->create_asset_loader(m_dataLoader.get());
+	m_resources = std::make_unique<Resources>(std::move(assetLoader));
 }
 
 void Engine::createRuntime() {

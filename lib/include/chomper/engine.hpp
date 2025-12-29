@@ -1,4 +1,5 @@
 #pragma once
+#include "chomper/resources.hpp"
 #include "chomper/runtime.hpp"
 #include <klib/log.hpp>
 #include <le2d/context.hpp>
@@ -22,6 +23,9 @@ class Engine : public klib::Pinned {
 	[[nodiscard]] le::Context const& getContext() const {
 		return *m_context;
 	}
+	[[nodiscard]] Resources& getResources() const {
+		return *m_resources;
+	}
 	[[nodiscard]] le::input::Router const& getInputRouter() const {
 		return m_inputRouter;
 	}
@@ -34,12 +38,14 @@ class Engine : public klib::Pinned {
   private:
 	void createDataLoader(std::string_view assetsDir);
 	void createContext(CreateInfo const& createInfo);
+	void createResources();
 	void createRuntime();
 
 	klib::TypedLogger<Engine> m_log{};
 
 	std::unique_ptr<le::IDataLoader> m_dataLoader{};
 	std::unique_ptr<le::Context> m_context{};
+	std::unique_ptr<Resources> m_resources{};
 	le::input::Router m_inputRouter{};
 
 	std::unique_ptr<IRuntime> m_runtime{};
