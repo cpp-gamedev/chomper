@@ -3,6 +3,7 @@
 #include "chomper/game.hpp"
 #include "chomper/viewport.hpp"
 #include <le2d/file_data_loader.hpp>
+#include <le2d/util.hpp>
 
 namespace chomper {
 Engine::Engine(CreateInfo const& createInfo) {
@@ -39,7 +40,12 @@ void Engine::run() {
 	}
 }
 
-void Engine::createDataLoader(std::string_view const assetsDir) {
+void Engine::createDataLoader(std::string_view assetsDir) {
+	auto upfoundAssetsDir = std::string{};
+	if (assetsDir.empty()) {
+		upfoundAssetsDir = le::FileDataLoader::upfind("assets", le::util::exe_path());
+		assetsDir = upfoundAssetsDir;
+	}
 	m_dataLoader = std::make_unique<le::FileDataLoader>(assetsDir);
 }
 
