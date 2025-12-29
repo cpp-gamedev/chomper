@@ -42,14 +42,14 @@ void Engine::createDataLoader(std::string_view const assetsDir) {
 }
 
 void Engine::createContext(CreateInfo const& createInfo) {
-	auto const platform_flags = [&] {
+	auto const platformFlags = [&] {
 		auto ret = le::PlatformFlag::None;
 		if (createInfo.noLibdecor) {
 			ret |= le::PlatformFlag::NoLibdecor;
 		}
 		return ret;
 	}();
-	auto const windowTitle = std::format("chomper {}", build_version_str);
+	auto const windowTitle = std::format("chomper {}", buildVersionStr);
 	static constexpr auto window_size_v = glm::ivec2{800, 800};
 	static constexpr auto window_flags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
 	auto const windowInfo = le::WindowInfo{
@@ -58,7 +58,7 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		.flags = window_flags_v,
 	};
 	auto const contextCI = le::Context::CreateInfo{
-		.platform_flags = platform_flags,
+		.platform_flags = platformFlags,
 		.window = windowInfo,
 	};
 	m_context = le::Context::create(contextCI);

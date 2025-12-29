@@ -11,7 +11,7 @@ struct TurnInputs {
 	std::vector<int> keys{};
 };
 
-auto const default_turn_inputs = std::array{
+auto const defaultTurnInputs = std::array{
 	TurnInputs{.heading = Heading::East, .keys = {GLFW_KEY_RIGHT, GLFW_KEY_D}},
 	TurnInputs{.heading = Heading::North, .keys = {GLFW_KEY_UP, GLFW_KEY_W}},
 	TurnInputs{.heading = Heading::West, .keys = {GLFW_KEY_LEFT, GLFW_KEY_A}},
@@ -27,9 +27,9 @@ PlayerController::PlayerController(gsl::not_null<IListener*> listener, le::input
 void PlayerController::tick(kvf::Seconds const /*dt*/) {}
 
 void PlayerController::createTurnActions() {
-	for (auto const& turn_inputs : default_turn_inputs) {
-		auto& turn_action = m_turnActions[turn_inputs.heading];
-		for (auto const key : turn_inputs.keys) {
+	for (auto const& turnInputs : defaultTurnInputs) {
+		auto& turn_action = m_turnActions[turnInputs.heading];
+		for (auto const key : turnInputs.keys) {
 			turn_action.push_back(std::make_unique<KeyDigital>(key));
 		}
 	}
@@ -39,13 +39,13 @@ void PlayerController::bindActions(le::input::ActionMapping& mapping) {
 	for (auto heading = Heading{}; heading < Heading::COUNT_; heading = Heading(int(heading) + 1)) {
 		// we're storing callbacks that capture 'this' into an external (non-owned) mapping.
 		// the actual owner MUST be responsible for clearing these mappings when 'this' is destroyed.
-		auto const on_action = [this, heading](ActionValue const v) {
+		auto const onAction = [this, heading](ActionValue const v) {
 			if (m_listener && v.get<bool>()) {
 				m_listener->onSetHeading(heading);
 			}
 		};
 		for (auto const& key : m_turnActions[heading]) {
-			mapping.bind_action(key.get(), on_action);
+			mapping.bind_action(key.get(), onAction);
 		}
 	}
 }

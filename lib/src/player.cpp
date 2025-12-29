@@ -10,7 +10,7 @@ void Player::tick(kvf::Seconds dt) {
 
 	// ImGui debug window
 	if (ImGui::Begin("Debug")) {
-		ImGui::TextUnformatted(klib::FixedString{"Heading: {}", heading_name_v[m_heading]}.c_str());
+		ImGui::TextUnformatted(klib::FixedString{"Heading: {}", headingName_v[m_heading]}.c_str());
 	}
 	ImGui::End();
 }
@@ -27,7 +27,7 @@ void Player::onSetHeading(Heading const heading) {
 	if (heading == m_heading) {
 		return;
 	}
-	m_log.debug("changing heading from {} to {}", heading_name_v[m_heading], heading_name_v[heading]);
+	m_log.debug("changing heading from {} to {}", headingName_v[m_heading], headingName_v[heading]);
 	m_heading = heading;
 }
 

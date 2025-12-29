@@ -14,7 +14,7 @@ class Engine : public klib::Pinned {
 		bool noLibdecor{};
 	};
 
-	explicit Engine(CreateInfo const& create_info);
+	explicit Engine(CreateInfo const& createInfo);
 
 	[[nodiscard]] le::IDataLoader const& getDataLoader() const {
 		return *m_dataLoader;
