@@ -29,7 +29,7 @@ void Engine::run() {
 		m_runtime->tick(dt);
 
 		// render runtime.
-		auto& renderer = m_context->begin_render();
+		auto& renderer = m_context->begin_render(kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}});
 		renderer.viewport = viewport_v;
 
 		m_runtime->render(renderer);
