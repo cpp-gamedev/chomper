@@ -8,5 +8,5 @@ inline constexpr auto build_version_v = klib::Version{
 	.patch = @PROJECT_VERSION_PATCH@,
 };
 
-inline auto const build_version_str = std::format("{}", build_version_v);
+inline auto const buildVersionStr = std::format("{}", build_version_v);
 } // namespace chomper

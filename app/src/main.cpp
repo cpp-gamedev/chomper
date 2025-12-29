@@ -10,18 +10,20 @@ namespace {
 auto const log = klib::TaggedLogger{"chomper"};
 
 auto run(int const argc, char const* const* argv) -> int {
-	auto engine_ci = Engine::CreateInfo{};
-	auto const parse_info = klib::args::ParseInfo{.version = build_version_str};
+	auto engineCI = Engine::CreateInfo{};
+	auto const parseInfo = klib::args::ParseInfo{.version = buildVersionStr};
 	auto const args = std::array{
-		klib::args::named_option(engine_ci.assetsDir, "a,assets", "override assets directory"),
-		klib::args::named_flag(engine_ci.noLibdecor, "no-libdecor", "disable libdecor (ignored unless Wayland)"),
+		klib::args::named_option(engineCI.assetsDir, "a,assets", "override assets directory"),
+		klib::args::named_flag(engineCI.noLibdecor, "no-libdecor", "disable libdecor (ignored unless Wayland)"),
 	};
-	auto const parse_result = klib::args::parse_main(parse_info, args, argc, argv);
-	if (parse_result.early_return()) { return parse_result.get_return_code(); }
+	auto const parseResult = klib::args::parse_main(parseInfo, args, argc, argv);
+	if (parseResult.early_return()) {
+		return parseResult.get_return_code();
+	}
 
-	log.info("chomper {}", chomper::build_version_str);
+	log.info("{}", chomper::buildVersionStr);
 
-	auto engine = Engine{engine_ci};
+	auto engine = Engine{engineCI};
 	engine.run();
 
 	log.info("shutting down");
@@ -32,7 +34,7 @@ auto run(int const argc, char const* const* argv) -> int {
 } // namespace chomper
 
 auto main(int argc, char** argv) -> int {
-	auto const log_file = klib::log::File{"chomper.log"};
+	auto const logFile = klib::log::File{"chomper.log"};
 	try {
 		chomper::run(argc, argv);
 	} catch (std::exception const& e) {

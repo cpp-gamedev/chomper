@@ -3,13 +3,16 @@
 #include "chomper/game.hpp"
 #include "chomper/viewport.hpp"
 #include <le2d/file_data_loader.hpp>
+#include <le2d/util.hpp>
 
 namespace chomper {
 Engine::Engine(CreateInfo const& createInfo) {
 	createDataLoader(createInfo.assetsDir);
 	createContext(createInfo);
+	createResources();
 	createRuntime();
 
+	m_context->set_visible(true);
 	m_log.info("created");
 }
 
@@ -37,19 +40,24 @@ void Engine::run() {
 	}
 }
 
-void Engine::createDataLoader(std::string_view const assetsDir) {
+void Engine::createDataLoader(std::string_view assetsDir) {
+	auto upfoundAssetsDir = std::string{};
+	if (assetsDir.empty()) {
+		upfoundAssetsDir = le::FileDataLoader::upfind("assets", le::util::exe_path());
+		assetsDir = upfoundAssetsDir;
+	}
 	m_dataLoader = std::make_unique<le::FileDataLoader>(assetsDir);
 }
 
 void Engine::createContext(CreateInfo const& createInfo) {
-	auto const platform_flags = [&] {
+	auto const platformFlags = [&] {
 		auto ret = le::PlatformFlag::None;
 		if (createInfo.noLibdecor) {
 			ret |= le::PlatformFlag::NoLibdecor;
 		}
 		return ret;
 	}();
-	auto const windowTitle = std::format("chomper {}", build_version_str);
+	auto const windowTitle = std::format("chomper {}", buildVersionStr);
 	static constexpr auto window_size_v = glm::ivec2{800, 800};
 	static constexpr auto window_flags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
 	auto const windowInfo = le::WindowInfo{
@@ -58,12 +66,15 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		.flags = window_flags_v,
 	};
 	auto const contextCI = le::Context::CreateInfo{
-		.platform_flags = platform_flags,
+		.platform_flags = platformFlags,
 		.window = windowInfo,
 	};
 	m_context = le::Context::create(contextCI);
-	m_context->lock_aspect_ratio(true);
-	m_context->set_visible(true);
+}
+
+void Engine::createResources() {
+	auto assetLoader = m_context->create_asset_loader(m_dataLoader.get());
+	m_resources = std::make_unique<Resources>(std::move(assetLoader));
 }
 
 void Engine::createRuntime() {
