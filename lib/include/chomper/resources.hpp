@@ -38,6 +38,15 @@ class Resources {
 		return *m_mainFont;
 	}
 
+	bool unload(std::string_view uri);
+	std::size_t unloadAll();
+
+	[[nodiscard]] std::size_t assetCount() const {
+		return m_assets.size();
+	}
+
+	[[nodiscard]] bool isRequiredAsset(le::IAsset const& asset) const;
+
   private:
 	le::AssetLoader m_assetLoader{};
 	dj::StringTable<std::unique_ptr<le::IAsset>> m_assets{};
