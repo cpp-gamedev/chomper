@@ -62,7 +62,6 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		.window = windowInfo,
 	};
 	m_context = le::Context::create(contextCI);
-	m_context->lock_aspect_ratio(true);
 	m_context->set_visible(true);
 }
 
