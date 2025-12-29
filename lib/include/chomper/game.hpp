@@ -1,6 +1,6 @@
 #pragma once
-#include "chomper/controller.hpp"
 #include "chomper/engine.hpp"
+#include "chomper/player.hpp"
 #include "chomper/runtime.hpp"
 #include <klib/ptr.hpp>
 #include <le2d/input/action.hpp>
@@ -8,7 +8,7 @@
 
 namespace chomper {
 // driven by Engine, owner (whether indirectly) of all game things.
-class Game : public IRuntime, public IController::IListener, public klib::Pinned {
+class Game : public IRuntime, public klib::Pinned {
   public:
 	explicit Game(gsl::not_null<Engine*> engine);
 
@@ -22,11 +22,8 @@ class Game : public IRuntime, public IController::IListener, public klib::Pinned
 	void tick(kvf::Seconds dt) final;
 	void render(le::IRenderer& renderer) const final;
 
-	// IController::IListener
-	void onSetHeading(Heading heading) final;
-
-	void createController();
 	void bindActions();
+	void createPlayer();
 
 	void onGoBack();
 
@@ -36,8 +33,7 @@ class Game : public IRuntime, public IController::IListener, public klib::Pinned
 
 	le::input::ScopedActionMapping m_mapping;
 	Actions m_actions{};
-	std::unique_ptr<IController> m_controller{};
 
-	Heading m_heading{};
+	std::unique_ptr<Player> m_player{};
 };
 } // namespace chomper
