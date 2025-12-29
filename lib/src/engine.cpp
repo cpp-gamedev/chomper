@@ -1,6 +1,7 @@
 #include "chomper/engine.hpp"
 #include "chomper/build_version.hpp"
 #include "chomper/game.hpp"
+#include "chomper/viewport.hpp"
 #include <le2d/file_data_loader.hpp>
 
 namespace chomper {
@@ -26,6 +27,8 @@ void Engine::run() {
 
 		// render runtime.
 		auto& renderer = m_context->begin_render();
+		renderer.viewport = viewport_v;
+
 		m_runtime->render(renderer);
 		renderer.end_render();
 
