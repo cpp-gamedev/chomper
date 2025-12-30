@@ -64,6 +64,8 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	void inspectStats();
 	void inspectVsync();
 
+	void processEvents();
+
 	klib::TypedLogger<Engine> m_log{};
 	Prefs m_prefs{};
 

@@ -4,6 +4,7 @@
 #include "chomper/viewport.hpp"
 #include <imgui.h>
 #include <klib/fixed_string.hpp>
+#include <klib/visitor.hpp>
 #include <le2d/file_data_loader.hpp>
 #include <le2d/util.hpp>
 
@@ -30,6 +31,7 @@ void Engine::run() {
 
 		// dispatch events and tick runtime.
 		auto const dt = deltaTime.tick();
+		processEvents();
 		m_inputRouter.dispatch(m_context->event_queue());
 		m_runtime->tick(dt);
 
@@ -81,8 +83,15 @@ void Engine::createContext(CreateInfo const& createInfo) {
 	auto const windowTitle = std::format("chomper {}", buildVersionStr);
 	static constexpr auto windowSize_v = glm::ivec2{800, 800};
 	static constexpr auto windowFlags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
+
+	auto const windowSize = [&] {
+		if (auto const ret = m_prefs.getWindowSize()) {
+			return *ret;
+		}
+		return windowSize_v;
+	}();
 	auto const windowInfo = le::WindowInfo{
-		.size = windowSize_v,
+		.size = windowSize,
 		.title = windowTitle.c_str(),
 		.flags = windowFlags_v,
 	};
@@ -134,6 +143,17 @@ void Engine::inspectVsync() {
 
 	if (selected) {
 		setVsync(*selected);
+	}
+}
+
+void Engine::processEvents() {
+	auto const visitor = klib::SubVisitor{
+		[this](le::event::WindowResize const& e) {
+			m_prefs.setWindowSize(e);
+		},
+	};
+	for (auto const& event : m_context->event_queue()) {
+		std::visit(visitor, event);
 	}
 }
 } // namespace chomper

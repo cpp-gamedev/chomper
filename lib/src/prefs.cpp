@@ -1,6 +1,7 @@
 #include "chomper/prefs.hpp"
 #include <djson/json.hpp>
 #include <klib/log.hpp>
+#include <le2d/json_io.hpp>
 #include <filesystem>
 
 namespace chomper {
@@ -22,12 +23,14 @@ void from_table(dj::Json const& json, std::string_view const key, std::optional<
 		return;
 	}
 	out_data.emplace();
+	using le::from_json;
 	from_json(json[key], *out_data);
 }
 
 template <typename Type>
 void to_table(dj::Json& json, std::string_view const key, std::optional<Type> const& data) {
 	if (data) {
+		using le::to_json;
 		to_json(json[key], *data);
 	}
 }
@@ -48,6 +51,7 @@ void to_table(dj::Json& json, std::string_view const key, std::optional<le::Vsyn
 
 namespace key {
 constexpr std::string_view vsync_v{"vsync"};
+constexpr std::string_view window_size_v{"window_size"};
 } // namespace key
 } // namespace
 
@@ -57,12 +61,11 @@ Prefs::Prefs(std::string_view const customPath) {
 }
 
 void Prefs::setVsync(std::optional<le::Vsync> const vsync) {
-	if (m_vsync == vsync) {
-		return;
-	}
+	overwrite(m_vsync, vsync);
+}
 
-	m_vsync = vsync;
-	save();
+void Prefs::setWindowSize(std::optional<glm::ivec2> const windowSize) {
+	overwrite(m_windowSize, windowSize);
 }
 
 void Prefs::reload() {
@@ -78,6 +81,7 @@ void Prefs::reload() {
 	}
 
 	from_table(*json, key::vsync_v, m_vsync);
+	from_table(*json, key::window_size_v, m_windowSize);
 
 	m_log.info("Prefs loaded from '{}'", m_path);
 }
@@ -90,6 +94,7 @@ void Prefs::save() {
 
 	auto json = dj::Json{};
 	to_table(json, key::vsync_v, m_vsync);
+	to_table(json, key::window_size_v, m_windowSize);
 
 	if (!json.to_file(m_path)) {
 		m_log.warn("failed to save Prefs to path: '{}'", m_path);
@@ -97,5 +102,15 @@ void Prefs::save() {
 	}
 
 	m_log.info("Prefs saved to '{}'", m_path);
+}
+
+template <typename Type>
+void Prefs::overwrite(std::optional<Type>& out, std::optional<Type> const& with) {
+	if (out == with) {
+		return;
+	}
+
+	out = with;
+	save();
 }
 } // namespace chomper
