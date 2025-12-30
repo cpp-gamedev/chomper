@@ -1,5 +1,5 @@
 #pragma once
-#include "chomper/debug_inspectable.hpp"
+#include "chomper/debug_inspector.hpp"
 #include <klib/c_string.hpp>
 #include <kvf/color.hpp>
 #include <gsl/pointers>
@@ -7,7 +7,7 @@
 
 namespace chomper {
 struct InspectItem {
-	gsl::not_null<IDebugInspectable*> inspectable;
+	gsl::not_null<IDebugInspector*> inspector;
 	klib::CString label{};
 };
 

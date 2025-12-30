@@ -6,7 +6,7 @@
 
 namespace chomper {
 namespace {
-class StatsInspector : public IDebugInspectable {
+class StatsInspector : public IDebugInspector {
   public:
 	explicit StatsInspector(DebugStats const& stats) : m_stats(stats) {}
 
@@ -48,12 +48,12 @@ void Game::render(le::IRenderer& renderer) const {
 void Game::debugInspectWindow() {
 	auto statsInspector = StatsInspector{m_engine->getDebugStats()};
 
-	auto const inspectables = std::array{
-		InspectItem{.inspectable = m_player.get(), .label = "Player"},
-		InspectItem{.inspectable = &m_engine->getResources(), .label = "Resources"},
-		InspectItem{.inspectable = &statsInspector, .label = "Stats"},
+	auto const inspectItems = std::array{
+		InspectItem{.inspector = m_player.get(), .label = "Player"},
+		InspectItem{.inspector = &m_engine->getResources(), .label = "Resources"},
+		InspectItem{.inspector = &statsInspector, .label = "Stats"},
 	};
-	im_util::inspectAsTabs(inspectables);
+	im_util::inspectAsTabs(inspectItems);
 }
 
 void Game::bindActions() {

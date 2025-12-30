@@ -2,7 +2,7 @@
 #include <klib/base_types.hpp>
 
 namespace chomper {
-class IDebugInspectable : public klib::Polymorphic {
+class IDebugInspector : public klib::Polymorphic {
   public:
 	virtual void debugInspect() = 0;
 };

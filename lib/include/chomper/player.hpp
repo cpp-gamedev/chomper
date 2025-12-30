@@ -1,6 +1,6 @@
 #pragma once
 #include "chomper/controller.hpp"
-#include "chomper/debug_inspectable.hpp"
+#include "chomper/debug_inspector.hpp"
 #include <imgui.h>
 #include <klib/log.hpp>
 #include <le2d/input/action.hpp>
@@ -8,7 +8,7 @@
 #include <le2d/renderer.hpp>
 
 namespace chomper {
-class Player : public IController::IListener, public IDebugInspectable, public klib::Pinned {
+class Player : public IController::IListener, public IDebugInspector, public klib::Pinned {
   public:
 	explicit Player(le::input::ScopedActionMapping& mapping);
 
@@ -19,7 +19,7 @@ class Player : public IController::IListener, public IDebugInspectable, public k
 	// IController::IListener
 	void onSetHeading(Heading heading) final;
 
-	// IDebugInspectable
+	// IDebugInspector
 	void debugInspect() final;
 
 	void createController(le::input::ScopedActionMapping& mapping);

@@ -1,5 +1,5 @@
 #pragma once
-#include "chomper/debug_inspectable.hpp"
+#include "chomper/debug_inspector.hpp"
 #include <djson/string_table.hpp>
 #include <le2d/asset/asset.hpp>
 #include <le2d/asset/asset_loader.hpp>
@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 namespace chomper {
-class Resources : public IDebugInspectable {
+class Resources : public IDebugInspector {
   public:
 	explicit Resources(le::AssetLoader assetLoader);
 
@@ -49,7 +49,7 @@ class Resources : public IDebugInspectable {
 	[[nodiscard]] bool isRequiredAsset(le::IAsset const& asset) const;
 
   private:
-	// IDebugInspectable
+	// IDebugInspector
 	void debugInspect() final;
 
 	le::AssetLoader m_assetLoader{};
