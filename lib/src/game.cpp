@@ -1,6 +1,8 @@
 #include "chomper/game.hpp"
+#include "chomper/im_util.hpp"
 #include <imgui.h>
 #include <klib/fixed_string.hpp>
+#include <array>
 
 namespace chomper {
 using ActionValue = le::input::action::Value;
@@ -11,11 +13,25 @@ Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine-
 
 void Game::tick(kvf::Seconds const dt) {
 	m_player->tick(dt);
+
+	ImGui::SetNextWindowSize({300.0f, 200.0f}, ImGuiCond_Once);
+	if (ImGui::Begin("Debug Inspect")) {
+		debugInspectWindow();
+	}
+	ImGui::End();
 }
 
 void Game::render(le::IRenderer& renderer) const {
 	m_player->render(renderer);
 }
+
+void Game::debugInspectWindow() {
+	auto const inspectables = std::array{
+		InspectItem{.inspectable = m_player.get(), .label = "Player"},
+	};
+	im_util::inspectAsTabs(inspectables);
+}
+
 void Game::bindActions() {
 	// goBackKey is separated from PlayerController so that it works regardless of the type of controller in use.
 	// this implies that all actions must share the same mapping to be active simultaneously.
