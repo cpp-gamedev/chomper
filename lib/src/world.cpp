@@ -26,7 +26,7 @@ void World::createGrid() {
 	m_gridTexture->overwrite(bitmap.bitmap());
 
 	m_gridQuad.texture = m_gridTexture.get();
-	m_gridQuad.create(m_gridQuad.get_rect(), kvf::UvRect{.lt = {0.f, 0.f}, .rb = world_size_v});
+	m_gridQuad.create(m_gridQuad.get_rect(), kvf::UvRect{.lt = {0.f, 0.f}, .rb = worldSize_v});
 }
 
 } // namespace chomper

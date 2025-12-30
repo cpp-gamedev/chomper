@@ -9,7 +9,7 @@
 
 namespace chomper {
 namespace {
-constexpr auto clear_color_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
+constexpr auto clearColor_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
 }
 Engine::Engine(CreateInfo const& createInfo) {
 	createDataLoader(createInfo.assetsDir);
@@ -34,7 +34,7 @@ void Engine::run() {
 		m_runtime->tick(dt);
 
 		// render runtime.
-		auto& renderer = m_context->begin_render(clear_color_v);
+		auto& renderer = m_context->begin_render(clearColor_v);
 		renderer.viewport = viewport_v;
 
 		m_runtime->render(renderer);
@@ -74,12 +74,12 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		return ret;
 	}();
 	auto const windowTitle = std::format("chomper {}", buildVersionStr);
-	static constexpr auto window_size_v = glm::ivec2{800, 800};
-	static constexpr auto window_flags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
+	static constexpr auto windowSize_v = glm::ivec2{800, 800};
+	static constexpr auto windowFlags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
 	auto const windowInfo = le::WindowInfo{
-		.size = window_size_v,
+		.size = windowSize_v,
 		.title = windowTitle.c_str(),
-		.flags = window_flags_v,
+		.flags = windowFlags_v,
 	};
 	auto const contextCI = le::Context::CreateInfo{
 		.platform_flags = platformFlags,

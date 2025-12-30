@@ -15,7 +15,7 @@ enum class Heading : std::int8_t {
 	South,
 	COUNT_
 };
-constexpr auto heading_name_v = klib::EnumArray<Heading, std::string_view>{"East", "North", "West", "South"};
+constexpr auto headingName_v = klib::EnumArray<Heading, std::string_view>{"East", "North", "West", "South"};
 
 // Heading controller interface.
 class IController : public klib::Polymorphic {
