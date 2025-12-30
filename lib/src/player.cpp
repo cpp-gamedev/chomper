@@ -1,4 +1,5 @@
 #include "chomper/player.hpp"
+#include "chomper/controllers/player_controller.hpp"
 
 namespace chomper {
 Player::Player(le::input::ScopedActionMapping& mapping) {
@@ -7,16 +8,14 @@ Player::Player(le::input::ScopedActionMapping& mapping) {
 
 void Player::tick(kvf::Seconds dt) {
 	m_controller->tick(dt);
-
-	// ImGui debug window
-	if (ImGui::Begin("Debug")) {
-		ImGui::TextUnformatted(klib::FixedString{"Heading: {}", heading_name_v[m_heading]}.c_str());
-	}
-	ImGui::End();
 }
 
 void Player::render(le::IRenderer& /*renderer*/) const {
 	// TODO
+}
+
+void Player::debugInspect() {
+	ImGui::TextUnformatted(klib::FixedString{"Heading: {}", heading_name_v[m_heading]}.c_str());
 }
 
 void Player::createController(le::input::ScopedActionMapping& mapping) {
