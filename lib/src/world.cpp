@@ -1,5 +1,5 @@
-#include "chomper/engine.hpp"
 #include "chomper/world.hpp"
+#include "chomper/engine.hpp"
 #include "chomper/world_size.hpp"
 
 namespace chomper {

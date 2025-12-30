@@ -16,7 +16,7 @@ class World {
 
   private:
 	void createGrid();
-	
+
 	gsl::not_null<Engine const*> m_engine;
 
 	le::drawable::Quad m_gridQuad;
