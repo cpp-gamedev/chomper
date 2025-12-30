@@ -51,12 +51,11 @@ void to_table(dj::Json& json, std::string_view const key, std::optional<le::Vsyn
 
 namespace key {
 constexpr std::string_view vsync_v{"vsync"};
-constexpr std::string_view window_size_v{"window_size"};
+constexpr std::string_view windowSize_v{"window_size"};
 } // namespace key
 } // namespace
 
-Prefs::Prefs(std::string_view const customPath) {
-	m_path = customPath.empty() ? defaultPath : customPath;
+Prefs::Prefs(std::string_view const customPath) : m_path(customPath.empty() ? defaultPath_v : customPath) {
 	reload();
 }
 
@@ -81,7 +80,7 @@ void Prefs::reload() {
 	}
 
 	from_table(*json, key::vsync_v, m_vsync);
-	from_table(*json, key::window_size_v, m_windowSize);
+	from_table(*json, key::windowSize_v, m_windowSize);
 
 	m_log.info("Prefs loaded from '{}'", m_path);
 }
@@ -94,7 +93,7 @@ void Prefs::save() {
 
 	auto json = dj::Json{};
 	to_table(json, key::vsync_v, m_vsync);
-	to_table(json, key::window_size_v, m_windowSize);
+	to_table(json, key::windowSize_v, m_windowSize);
 
 	if (!json.to_file(m_path)) {
 		m_log.warn("failed to save Prefs to path: '{}'", m_path);

@@ -7,7 +7,7 @@
 namespace chomper {
 class Prefs {
   public:
-	inline static auto const defaultPath = std::string{"chomper_prefs.json"};
+	static constexpr auto defaultPath_v = std::string_view{"chomper_prefs.json"};
 
 	explicit Prefs(std::string_view customPath = {});
 

@@ -84,12 +84,7 @@ void Engine::createContext(CreateInfo const& createInfo) {
 	static constexpr auto windowSize_v = glm::ivec2{800, 800};
 	static constexpr auto windowFlags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
 
-	auto const windowSize = [&] {
-		if (auto const ret = m_prefs.getWindowSize()) {
-			return *ret;
-		}
-		return windowSize_v;
-	}();
+	auto const windowSize = m_prefs.getWindowSize().value_or(windowSize_v);
 	auto const windowInfo = le::WindowInfo{
 		.size = windowSize,
 		.title = windowTitle.c_str(),
