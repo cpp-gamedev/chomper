@@ -7,6 +7,7 @@ using ActionValue = le::input::action::Value;
 
 Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine->getInputRouter()) {
 	createPlayer();
+	m_world = std::make_unique<World>(m_engine);
 }
 
 void Game::tick(kvf::Seconds const dt) {
@@ -20,6 +21,7 @@ void Game::tick(kvf::Seconds const dt) {
 }
 
 void Game::render(le::IRenderer& renderer) const {
+	m_world->render(renderer);
 	m_player->render(renderer);
 }
 

@@ -2,6 +2,7 @@
 #include "chomper/engine.hpp"
 #include "chomper/player.hpp"
 #include "chomper/runtime.hpp"
+#include "chomper/world.hpp"
 #include <klib/ptr.hpp>
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
@@ -37,5 +38,6 @@ class Game : public IRuntime, public klib::Pinned {
 	Actions m_actions{};
 
 	std::unique_ptr<Player> m_player{};
+	std::unique_ptr<World> m_world{};
 };
 } // namespace chomper
