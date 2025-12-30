@@ -1,4 +1,5 @@
 #pragma once
+#include "chomper/debug_inspector.hpp"
 #include <djson/string_table.hpp>
 #include <le2d/asset/asset.hpp>
 #include <le2d/asset/asset_loader.hpp>
@@ -8,7 +9,7 @@
 #include <stdexcept>
 
 namespace chomper {
-class Resources {
+class Resources : public IDebugInspector {
   public:
 	explicit Resources(le::AssetLoader assetLoader);
 
@@ -48,6 +49,9 @@ class Resources {
 	[[nodiscard]] bool isRequiredAsset(le::IAsset const& asset) const;
 
   private:
+	// IDebugInspector
+	void debugInspect() final;
+
 	le::AssetLoader m_assetLoader{};
 	dj::StringTable<std::unique_ptr<le::IAsset>> m_assets{};
 

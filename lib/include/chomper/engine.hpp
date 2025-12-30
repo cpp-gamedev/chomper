@@ -1,4 +1,5 @@
 #pragma once
+#include "chomper/debug_stats.hpp"
 #include "chomper/resources.hpp"
 #include "chomper/runtime.hpp"
 #include <klib/log.hpp>
@@ -33,6 +34,10 @@ class Engine : public klib::Pinned {
 		return m_inputRouter;
 	}
 
+	[[nodiscard]] DebugStats const& getDebugStats() const {
+		return m_debugStats;
+	}
+
 	void run();
 
   private:
@@ -49,5 +54,7 @@ class Engine : public klib::Pinned {
 	le::input::Router m_inputRouter{};
 
 	std::unique_ptr<IRuntime> m_runtime{};
+
+	DebugStats m_debugStats{};
 };
 } // namespace chomper

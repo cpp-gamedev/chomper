@@ -35,6 +35,11 @@ void Engine::run() {
 		m_runtime->render(renderer);
 		renderer.end_render();
 
+		m_debugStats = DebugStats{
+			.frame = m_context->get_frame_stats(),
+			.render = renderer.get_stats(),
+		};
+
 		// submit frame for presentation.
 		m_context->present();
 	}

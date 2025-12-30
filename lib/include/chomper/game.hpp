@@ -22,6 +22,8 @@ class Game : public IRuntime, public klib::Pinned {
 	void tick(kvf::Seconds dt) final;
 	void render(le::IRenderer& renderer) const final;
 
+	void debugInspectWindow();
+
 	void bindActions();
 	void createPlayer();
 
