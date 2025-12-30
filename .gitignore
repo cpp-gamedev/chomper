@@ -14,3 +14,4 @@ imgui.ini
 *.log
 
 notes.txt
+*prefs.json

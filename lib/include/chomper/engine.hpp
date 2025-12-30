@@ -1,6 +1,7 @@
 #pragma once
 #include "chomper/debug_inspector.hpp"
 #include "chomper/debug_stats.hpp"
+#include "chomper/prefs.hpp"
 #include "chomper/resources.hpp"
 #include "chomper/runtime.hpp"
 #include <klib/log.hpp>
@@ -14,6 +15,7 @@ class Engine : public IDebugInspector, public klib::Pinned {
   public:
 	struct CreateInfo {
 		std::string_view assetsDir{};
+		std::string_view prefsPath{};
 		bool noLibdecor{};
 	};
 
@@ -35,11 +37,20 @@ class Engine : public IDebugInspector, public klib::Pinned {
 		return m_inputRouter;
 	}
 
+	[[nodiscard]] Prefs const& getPrefs() const {
+		return m_prefs;
+	}
+	[[nodiscard]] Prefs& getPrefs() {
+		return m_prefs;
+	}
+
 	[[nodiscard]] DebugStats const& getDebugStats() const {
 		return m_debugStats;
 	}
 
 	void run();
+
+	void setVsync(le::Vsync vsync);
 
   private:
 	// IDebugInspector
@@ -54,6 +65,7 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	void inspectVsync();
 
 	klib::TypedLogger<Engine> m_log{};
+	Prefs m_prefs{};
 
 	std::unique_ptr<le::IDataLoader> m_dataLoader{};
 	std::unique_ptr<le::Context> m_context{};

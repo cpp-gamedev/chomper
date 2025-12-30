@@ -11,7 +11,7 @@ namespace chomper {
 namespace {
 constexpr auto clearColor_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
 }
-Engine::Engine(CreateInfo const& createInfo) {
+Engine::Engine(CreateInfo const& createInfo) : m_prefs(createInfo.prefsPath) {
 	createDataLoader(createInfo.assetsDir);
 	createContext(createInfo);
 	createResources();
@@ -50,6 +50,11 @@ void Engine::run() {
 	}
 }
 
+void Engine::setVsync(le::Vsync const vsync) {
+	m_context->set_vsync(vsync);
+	m_prefs.setVsync(m_context->get_vsync());
+}
+
 void Engine::debugInspect() {
 	inspectStats();
 	ImGui::Separator();
@@ -86,6 +91,10 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		.window = windowInfo,
 	};
 	m_context = le::Context::create(contextCI);
+
+	if (auto const vsync = m_prefs.getVsync()) {
+		setVsync(*vsync);
+	}
 }
 
 void Engine::createResources() {
@@ -124,7 +133,7 @@ void Engine::inspectVsync() {
 	}
 
 	if (selected) {
-		m_context->set_vsync(*selected);
+		setVsync(*selected);
 	}
 }
 } // namespace chomper
