@@ -20,6 +20,7 @@ namespace fs = std::filesystem;
 template <typename Type>
 void from_table(dj::Json const& json, std::string_view const key, std::optional<Type>& out_data) {
 	if (!json.as_object().contains(key)) {
+		out_data.reset();
 		return;
 	}
 	out_data.emplace();
@@ -37,6 +38,7 @@ void to_table(dj::Json& json, std::string_view const key, std::optional<Type> co
 
 void from_table(dj::Json const& json, std::string_view const key, std::optional<le::Vsync>& out_vsync) {
 	if (!json.as_object().contains(key)) {
+		out_vsync.reset();
 		return;
 	}
 	out_vsync = to_vsync(json[key].as_string_view());
