@@ -28,6 +28,7 @@ void Game::render(le::IRenderer& renderer) const {
 void Game::debugInspectWindow() {
 	auto const inspectables = std::array{
 		InspectItem{.inspectable = m_player.get(), .label = "Player"},
+		InspectItem{.inspectable = &m_engine->getResources(), .label = "Resources"},
 	};
 	im_util::inspectAsTabs(inspectables);
 }
