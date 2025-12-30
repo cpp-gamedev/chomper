@@ -2,6 +2,8 @@
 #include "chomper/build_version.hpp"
 #include "chomper/game.hpp"
 #include "chomper/viewport.hpp"
+#include <imgui.h>
+#include <klib/fixed_string.hpp>
 #include <le2d/file_data_loader.hpp>
 #include <le2d/util.hpp>
 
@@ -48,6 +50,12 @@ void Engine::run() {
 	}
 }
 
+void Engine::debugInspect() {
+	inspectStats();
+	ImGui::Separator();
+	inspectVsync();
+}
+
 void Engine::createDataLoader(std::string_view assetsDir) {
 	auto upfoundAssetsDir = std::string{};
 	if (assetsDir.empty()) {
@@ -88,5 +96,35 @@ void Engine::createResources() {
 void Engine::createRuntime() {
 	// Game stores 'this', so Engine must remain address-stable. this is why it inherits from Pinned.
 	m_runtime = std::make_unique<Game>(this);
+}
+
+void Engine::inspectStats() {
+	ImGui::TextUnformatted("stats");
+	auto const dt = std::chrono::duration<float, std::milli>{m_debugStats.frame.total_dt};
+	ImGui::TextUnformatted(klib::FixedString{"frametime : {:.1f}ms", dt.count()}.c_str());
+	ImGui::TextUnformatted(klib::FixedString{"framerate : {}", m_debugStats.frame.framerate}.c_str());
+	ImGui::TextUnformatted(klib::FixedString{"frames : {}", m_debugStats.frame.total_frames}.c_str());
+	ImGui::TextUnformatted(klib::FixedString{"runtime : {:.1f}s", m_debugStats.frame.run_time.count()}.c_str());
+	ImGui::TextUnformatted(klib::FixedString{"draw calls : {}", m_debugStats.render.draw_calls}.c_str());
+	ImGui::TextUnformatted(klib::FixedString{"triangles : {}", m_debugStats.render.triangles}.c_str());
+}
+
+void Engine::inspectVsync() {
+	auto const supported = m_context->get_supported_vsync();
+	auto const current = m_context->get_vsync();
+	auto selected = std::optional<le::Vsync>{};
+	if (ImGui::BeginCombo("vsync", le::vsync_str_v[current].data())) {
+		for (auto const vsync : supported) {
+			auto const str = le::vsync_str_v[vsync];
+			if (ImGui::Selectable(str.data(), vsync == current)) {
+				selected = vsync;
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	if (selected) {
+		m_context->set_vsync(*selected);
+	}
 }
 } // namespace chomper

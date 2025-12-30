@@ -1,4 +1,5 @@
 #pragma once
+#include "chomper/debug_inspector.hpp"
 #include "chomper/debug_stats.hpp"
 #include "chomper/resources.hpp"
 #include "chomper/runtime.hpp"
@@ -9,7 +10,7 @@
 #include <memory>
 
 namespace chomper {
-class Engine : public klib::Pinned {
+class Engine : public IDebugInspector, public klib::Pinned {
   public:
 	struct CreateInfo {
 		std::string_view assetsDir{};
@@ -41,10 +42,16 @@ class Engine : public klib::Pinned {
 	void run();
 
   private:
+	// IDebugInspector
+	void debugInspect() final;
+
 	void createDataLoader(std::string_view assetsDir);
 	void createContext(CreateInfo const& createInfo);
 	void createResources();
 	void createRuntime();
+
+	void inspectStats();
+	void inspectVsync();
 
 	klib::TypedLogger<Engine> m_log{};
 

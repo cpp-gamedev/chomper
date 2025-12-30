@@ -1,30 +1,8 @@
 #include "chomper/game.hpp"
 #include "chomper/im_util.hpp"
-#include <imgui.h>
-#include <klib/fixed_string.hpp>
 #include <array>
 
 namespace chomper {
-namespace {
-class StatsInspector : public IDebugInspector {
-  public:
-	explicit StatsInspector(DebugStats const& stats) : m_stats(stats) {}
-
-  private:
-	void debugInspect() final {
-		auto const dt = std::chrono::duration<float, std::milli>{m_stats.frame.total_dt};
-		ImGui::TextUnformatted(klib::FixedString{"frametime : {:.1f}ms", dt.count()}.c_str());
-		ImGui::TextUnformatted(klib::FixedString{"framerate : {}", m_stats.frame.framerate}.c_str());
-		ImGui::TextUnformatted(klib::FixedString{"frames : {}", m_stats.frame.total_frames}.c_str());
-		ImGui::TextUnformatted(klib::FixedString{"runtime : {:.1f}s", m_stats.frame.run_time.count()}.c_str());
-		ImGui::TextUnformatted(klib::FixedString{"draw calls : {}", m_stats.render.draw_calls}.c_str());
-		ImGui::TextUnformatted(klib::FixedString{"triangles : {}", m_stats.render.triangles}.c_str());
-	}
-
-	DebugStats const& m_stats;
-};
-} // namespace
-
 using ActionValue = le::input::action::Value;
 
 Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine->getInputRouter()) {
@@ -48,12 +26,10 @@ void Game::render(le::IRenderer& renderer) const {
 }
 
 void Game::debugInspectWindow() {
-	auto statsInspector = StatsInspector{m_engine->getDebugStats()};
-
 	auto const inspectItems = std::array{
 		InspectItem{.inspector = m_player.get(), .label = "Player"},
 		InspectItem{.inspector = &m_engine->getResources(), .label = "Resources"},
-		InspectItem{.inspector = &statsInspector, .label = "Stats"},
+		InspectItem{.inspector = m_engine, .label = "Engine"},
 	};
 	im_util::inspectAsTabs(inspectItems);
 }
