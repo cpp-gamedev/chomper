@@ -7,14 +7,17 @@
 #include <le2d/resource/texture.hpp>
 
 namespace chomper {
+class Engine;
 class World {
   public:
-	explicit World(le::Context const& context);
+	explicit World(gsl::not_null<Engine const*> engine);
 
 	void render(le::IRenderer& renderer) const;
 
   private:
-	void createGrid(le::Context const& context);
+	void createGrid();
+	
+	gsl::not_null<Engine const*> m_engine;
 
 	le::drawable::Quad m_gridQuad;
 	std::unique_ptr<le::ITexture> m_gridTexture;

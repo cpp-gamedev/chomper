@@ -14,7 +14,3 @@ set(CMAKE_DEBUG_POSTFIX "-d")
 add_subdirectory(ext)
 add_subdirectory(lib)
 add_subdirectory(app)
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE
-    ASSETS_DIR="${CMAKE_SOURCE_DIR}/assets"
-)

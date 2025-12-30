@@ -7,7 +7,7 @@ using ActionValue = le::input::action::Value;
 
 Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine->getInputRouter()) {
 	createPlayer();
-	m_world = std::make_unique<World>(engine->getContext());
+	m_world = std::make_unique<World>(m_engine);
 }
 
 void Game::tick(kvf::Seconds const dt) {
