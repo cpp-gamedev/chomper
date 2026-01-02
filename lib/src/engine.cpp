@@ -4,6 +4,7 @@
 #include "chomper/viewport.hpp"
 #include <imgui.h>
 #include <klib/fixed_string.hpp>
+#include <klib/visitor.hpp>
 #include <le2d/file_data_loader.hpp>
 #include <le2d/util.hpp>
 
@@ -11,7 +12,7 @@ namespace chomper {
 namespace {
 constexpr auto clearColor_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
 }
-Engine::Engine(CreateInfo const& createInfo) {
+Engine::Engine(CreateInfo const& createInfo) : m_prefs(createInfo.prefsPath) {
 	createDataLoader(createInfo.assetsDir);
 	createContext(createInfo);
 	createResources();
@@ -30,6 +31,7 @@ void Engine::run() {
 
 		// dispatch events and tick runtime.
 		auto const dt = deltaTime.tick();
+		processEvents();
 		m_inputRouter.dispatch(m_context->event_queue());
 		m_runtime->tick(dt);
 
@@ -48,6 +50,11 @@ void Engine::run() {
 		// submit frame for presentation.
 		m_context->present();
 	}
+}
+
+void Engine::setVsync(le::Vsync const vsync) {
+	m_context->set_vsync(vsync);
+	m_prefs.setVsync(m_context->get_vsync());
 }
 
 void Engine::debugInspect() {
@@ -76,8 +83,10 @@ void Engine::createContext(CreateInfo const& createInfo) {
 	auto const windowTitle = std::format("chomper {}", buildVersionStr);
 	static constexpr auto windowSize_v = glm::ivec2{800, 800};
 	static constexpr auto windowFlags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
+
+	auto const windowSize = m_prefs.getWindowSize().value_or(windowSize_v);
 	auto const windowInfo = le::WindowInfo{
-		.size = windowSize_v,
+		.size = windowSize,
 		.title = windowTitle.c_str(),
 		.flags = windowFlags_v,
 	};
@@ -86,6 +95,10 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		.window = windowInfo,
 	};
 	m_context = le::Context::create(contextCI);
+
+	if (auto const vsync = m_prefs.getVsync()) {
+		setVsync(*vsync);
+	}
 }
 
 void Engine::createResources() {
@@ -124,7 +137,18 @@ void Engine::inspectVsync() {
 	}
 
 	if (selected) {
-		m_context->set_vsync(*selected);
+		setVsync(*selected);
+	}
+}
+
+void Engine::processEvents() {
+	auto const visitor = klib::SubVisitor{
+		[this](le::event::WindowResize const& e) {
+			m_prefs.setWindowSize(e);
+		},
+	};
+	for (auto const& event : m_context->event_queue()) {
+		std::visit(visitor, event);
 	}
 }
 } // namespace chomper
