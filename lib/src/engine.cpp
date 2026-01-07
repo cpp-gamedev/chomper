@@ -1,8 +1,10 @@
 #include "chomper/engine.hpp"
 #include "chomper/build_version.hpp"
 #include "chomper/game.hpp"
+#include "chomper/inclusive_range.hpp"
 #include "chomper/viewport.hpp"
 #include <imgui.h>
+#include <klib/assert.hpp>
 #include <klib/fixed_string.hpp>
 #include <klib/visitor.hpp>
 #include <le2d/file_data_loader.hpp>
@@ -30,10 +32,16 @@ void Engine::run() {
 		m_context->next_frame();
 
 		// dispatch events and tick runtime.
-		auto const dt = deltaTime.tick();
+		auto const realDt = deltaTime.tick();
+		auto scaledDt = m_dtScale * realDt;
+		static constexpr auto maxDt_v = kvf::Seconds{2.0f};
+		if (scaledDt > maxDt_v) {
+			m_log.warn("giant dt ({}), clamping to max ({})", scaledDt, maxDt_v);
+			scaledDt = maxDt_v;
+		}
 		processEvents();
 		m_inputRouter.dispatch(m_context->event_queue());
-		m_runtime->tick(dt);
+		m_runtime->tick(scaledDt);
 
 		// render runtime.
 		auto& renderer = m_context->begin_render(clearColor_v);
@@ -61,6 +69,7 @@ void Engine::debugInspect() {
 	inspectStats();
 	ImGui::Separator();
 	inspectVsync();
+	inspectDtScale();
 }
 
 void Engine::createDataLoader(std::string_view assetsDir) {
@@ -138,6 +147,20 @@ void Engine::inspectVsync() {
 
 	if (selected) {
 		setVsync(*selected);
+	}
+}
+
+void Engine::inspectDtScale() {
+	static constexpr auto range_v = InclusiveRange{.lo = 0.0f, .hi = 3.0f};
+	auto dtScale = m_dtScale;
+	if (ImGui::DragFloat("dt scale", &dtScale, 0.05f, range_v.lo, range_v.hi)) {
+		m_dtScale = std::clamp(dtScale, range_v.lo, range_v.hi);
+	}
+	KLIB_ASSERT(m_dtScale >= 0.0f);
+
+	auto paused = m_dtScale == 0.0f;
+	if (ImGui::Checkbox("pause", &paused)) {
+		m_dtScale = paused ? 0.0f : 1.0f;
 	}
 }
 
