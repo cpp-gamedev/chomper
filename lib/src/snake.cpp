@@ -18,9 +18,6 @@ Snake::Snake() {
 }
 
 void Snake::tick(kvf::Seconds dt) {
-	m_quads.instances.clear();
-	m_quads.instances.reserve(m_instances.size());
-	std::ranges::copy(m_instances, std::back_inserter(m_quads.instances));
 	m_moveTimer += dt;
 
 	if (m_moveTimer >= moveSpeed_v) {
@@ -42,9 +39,13 @@ void Snake::tick(kvf::Seconds dt) {
 			popTail();
 		}
 	}
+
+	m_quads.instances.clear();
+	m_quads.instances.reserve(m_instances.size());
+	std::ranges::copy(m_instances, std::back_inserter(m_quads.instances));
 }
 
-void Snake::render(le::IRenderer& renderer) const {
+void Snake::draw(le::IRenderer& renderer) const {
 	m_quads.draw(renderer);
 }
 

@@ -10,7 +10,7 @@ class Snake {
   public:
 	explicit Snake();
 	void tick(kvf::Seconds dt);
-	void render(le::IRenderer& renderer) const;
+	void draw(le::IRenderer& renderer) const;
 
 	void setHeading(Heading heading);
 	void debugInspect();

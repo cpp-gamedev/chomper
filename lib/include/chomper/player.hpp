@@ -14,7 +14,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	explicit Player(le::input::ScopedActionMapping& mapping);
 
 	void tick(kvf::Seconds dt);
-	void render(le::IRenderer& renderer) const;
+	void draw(le::IRenderer& renderer) const;
 
   private:
 	// IController::IListener

@@ -7,7 +7,7 @@ World::World(gsl::not_null<Engine const*> engine) : m_engine(engine) {
 	createGrid();
 }
 
-void World::render(le::IRenderer& renderer) const {
+void World::draw(le::IRenderer& renderer) const {
 	m_gridQuad.draw(renderer);
 }
 

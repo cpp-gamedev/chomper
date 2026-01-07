@@ -11,8 +11,8 @@ void Player::tick(kvf::Seconds dt) {
 	m_snake.tick(dt);
 }
 
-void Player::render(le::IRenderer& renderer) const {
-	m_snake.render(renderer);
+void Player::draw(le::IRenderer& renderer) const {
+	m_snake.draw(renderer);
 }
 
 void Player::debugInspect() {
