@@ -82,5 +82,12 @@ void Snake::debugInspect() {
 	ImGui::TextUnformatted("snake");
 	ImGui::Separator();
 	ImGui::TextUnformatted(klib::FixedString{"Heading: {}", headingName_v[m_heading]}.c_str());
+
+	if (ImGui::TreeNode("heading queue")) {
+		for (auto const heading : m_headingQueue) {
+			ImGui::TextUnformatted(headingName_v[heading].data());
+		}
+		ImGui::TreePop();
+	}
 }
 } // namespace chomper
