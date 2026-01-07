@@ -1,6 +1,7 @@
 #pragma once
 #include "chomper/controller.hpp"
 #include "chomper/debug_inspector.hpp"
+#include "chomper/snake.hpp"
 #include <imgui.h>
 #include <klib/log.hpp>
 #include <le2d/input/action.hpp>
@@ -28,6 +29,6 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 
 	std::unique_ptr<IController> m_controller{};
 
-	Heading m_heading{};
+	Snake m_snake{};
 };
 } // namespace chomper
