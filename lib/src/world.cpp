@@ -7,7 +7,7 @@ World::World(gsl::not_null<Engine const*> engine) : m_engine(engine) {
 	createGrid();
 }
 
-void World::render(le::IRenderer& renderer) const {
+void World::draw(le::IRenderer& renderer) const {
 	m_gridQuad.draw(renderer);
 }
 
@@ -26,7 +26,7 @@ void World::createGrid() {
 	m_gridTexture->overwrite(bitmap.bitmap());
 
 	m_gridQuad.texture = m_gridTexture.get();
-	m_gridQuad.create(m_gridQuad.get_rect(), kvf::UvRect{.lt = {0.f, 0.f}, .rb = worldSize_v});
+	m_gridQuad.create(m_gridQuad.get_rect(), kvf::UvRect{.lt = {0.f, 0.f}, .rb = worldSize_v * 0.5f}); // * 0.5f, since each texture is 2x2 tiles
 }
 
 } // namespace chomper

@@ -21,8 +21,8 @@ void Game::tick(kvf::Seconds const dt) {
 }
 
 void Game::render(le::IRenderer& renderer) const {
-	m_world->render(renderer);
-	m_player->render(renderer);
+	m_world->draw(renderer);
+	m_player->draw(renderer);
 }
 
 void Game::debugInspectWindow() {

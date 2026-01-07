@@ -12,7 +12,7 @@ class World {
   public:
 	explicit World(gsl::not_null<Engine const*> engine);
 
-	void render(le::IRenderer& renderer) const;
+	void draw(le::IRenderer& renderer) const;
 
   private:
 	void createGrid();
