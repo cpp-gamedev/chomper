@@ -1,7 +1,7 @@
 #include "chomper/engine.hpp"
 #include "chomper/build_version.hpp"
-#include "chomper/game.hpp"
 #include "chomper/inclusive_range.hpp"
+#include "chomper/runtimes/entrypoint.hpp"
 #include "chomper/viewport.hpp"
 #include <imgui.h>
 #include <klib/assert.hpp>
@@ -13,12 +13,17 @@
 namespace chomper {
 namespace {
 constexpr auto clearColor_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
+
+std::unique_ptr<IRuntime> createEntrypoint(Engine& engine) {
+	return std::make_unique<runtime::Entrypoint>(&engine);
 }
+} // namespace
+
 Engine::Engine(CreateInfo const& createInfo) : m_prefs(createInfo.prefsPath) {
 	createDataLoader(createInfo.assetsDir);
 	createContext(createInfo);
 	createResources();
-	createRuntime();
+	setNextRuntime(&createEntrypoint);
 
 	m_context->set_visible(true);
 	m_log.info("created");
@@ -31,9 +36,12 @@ void Engine::run() {
 		// initialize next frame.
 		m_context->next_frame();
 
+		checkNextRuntime();
+		KLIB_ASSERT(m_runtime);
+
 		// dispatch events and tick runtime.
 		auto const realDt = deltaTime.tick();
-		auto scaledDt = m_dtScale * realDt;
+		auto scaledDt = m_runtimeState.dtScale * realDt;
 		static constexpr auto maxDt_v = kvf::Seconds{2.0f};
 		if (scaledDt > maxDt_v) {
 			m_log.warn("giant dt ({}), clamping to max ({})", scaledDt, maxDt_v);
@@ -46,6 +54,7 @@ void Engine::run() {
 		// render runtime.
 		auto& renderer = m_context->begin_render(clearColor_v);
 		renderer.viewport = viewport_v;
+		renderer.polygon_mode = m_runtimeState.wireframe ? vk::PolygonMode::eLine : vk::PolygonMode::eFill;
 
 		m_runtime->render(renderer);
 		renderer.end_render();
@@ -65,11 +74,26 @@ void Engine::setVsync(le::Vsync const vsync) {
 	m_prefs.setVsync(m_context->get_vsync());
 }
 
+void Engine::setNextRuntime(CreateRuntime callback) {
+	if (!callback) {
+		return;
+	}
+	m_nextRuntime = std::move(callback);
+}
+
 void Engine::debugInspect() {
 	inspectStats();
+
 	ImGui::Separator();
 	inspectVsync();
 	inspectDtScale();
+	ImGui::Checkbox("wireframe", &m_runtimeState.wireframe);
+
+	ImGui::Separator();
+	if (ImGui::Button("restart")) {
+		m_log.info("restarting");
+		setNextRuntime(&createEntrypoint);
+	}
 }
 
 void Engine::createDataLoader(std::string_view assetsDir) {
@@ -90,7 +114,7 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		return ret;
 	}();
 	auto const windowTitle = std::format("chomper {}", buildVersionStr);
-	static constexpr auto windowSize_v = glm::ivec2{800, 800};
+	static constexpr auto windowSize_v = glm::ivec2{viewport_v.world_size};
 	static constexpr auto windowFlags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
 
 	auto const windowSize = m_prefs.getWindowSize().value_or(windowSize_v);
@@ -113,11 +137,6 @@ void Engine::createContext(CreateInfo const& createInfo) {
 void Engine::createResources() {
 	auto assetLoader = m_context->create_asset_loader(m_dataLoader.get());
 	m_resources = std::make_unique<Resources>(std::move(assetLoader));
-}
-
-void Engine::createRuntime() {
-	// Game stores 'this', so Engine must remain address-stable. this is why it inherits from Pinned.
-	m_runtime = std::make_unique<Game>(this);
 }
 
 void Engine::inspectStats() {
@@ -152,16 +171,33 @@ void Engine::inspectVsync() {
 
 void Engine::inspectDtScale() {
 	static constexpr auto range_v = InclusiveRange{.lo = 0.0f, .hi = 3.0f};
-	auto dtScale = m_dtScale;
+	auto dtScale = m_runtimeState.dtScale;
 	if (ImGui::DragFloat("dt scale", &dtScale, 0.05f, range_v.lo, range_v.hi)) {
-		m_dtScale = std::clamp(dtScale, range_v.lo, range_v.hi);
+		m_runtimeState.dtScale = std::clamp(dtScale, range_v.lo, range_v.hi);
 	}
-	KLIB_ASSERT(m_dtScale >= 0.0f);
+	KLIB_ASSERT(m_runtimeState.dtScale >= 0.0f);
 
-	auto paused = m_dtScale == 0.0f;
+	auto paused = m_runtimeState.dtScale == 0.0f;
 	if (ImGui::Checkbox("pause", &paused)) {
-		m_dtScale = paused ? 0.0f : 1.0f;
+		m_runtimeState.dtScale = paused ? 0.0f : 1.0f;
 	}
+}
+
+void Engine::checkNextRuntime() {
+	if (!m_nextRuntime) {
+		return;
+	}
+
+	auto nextRuntime = m_nextRuntime(*this);
+	m_nextRuntime = {};
+	if (!nextRuntime) {
+		m_log.error("Failed to create next Runtime");
+		return;
+	}
+
+	m_runtime = std::move(nextRuntime);
+	m_runtimeState = {};
+	m_log.info("[{}] loaded", klib::demangled_name(*m_runtime));
 }
 
 void Engine::processEvents() {

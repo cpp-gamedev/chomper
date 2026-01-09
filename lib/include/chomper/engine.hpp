@@ -8,6 +8,7 @@
 #include <le2d/context.hpp>
 #include <le2d/data_loader.hpp>
 #include <le2d/input/router.hpp>
+#include <functional>
 #include <memory>
 
 namespace chomper {
@@ -18,6 +19,8 @@ class Engine : public IDebugInspector, public klib::Pinned {
 		std::string_view prefsPath{};
 		bool noLibdecor{};
 	};
+
+	using CreateRuntime = std::move_only_function<std::unique_ptr<IRuntime>(Engine&)>;
 
 	explicit Engine(CreateInfo const& createInfo);
 
@@ -51,20 +54,34 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	void run();
 
 	void setVsync(le::Vsync vsync);
+	void setNextRuntime(CreateRuntime callback);
+
+	template <std::derived_from<IRuntime> RuntimeT>
+		requires(std::constructible_from<RuntimeT, Engine*>)
+	void setNextRuntime() {
+		setNextRuntime([](Engine& self) {
+			return std::make_unique<RuntimeT>(&self);
+		});
+	}
 
   private:
+	struct RuntimeState {
+		float dtScale{1.0f};
+		bool wireframe{false};
+	};
+
 	// IDebugInspector
 	void debugInspect() final;
 
 	void createDataLoader(std::string_view assetsDir);
 	void createContext(CreateInfo const& createInfo);
 	void createResources();
-	void createRuntime();
 
 	void inspectStats();
 	void inspectVsync();
 	void inspectDtScale();
 
+	void checkNextRuntime();
 	void processEvents();
 
 	klib::TypedLogger<Engine> m_log{};
@@ -76,8 +93,9 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	le::input::Router m_inputRouter{};
 
 	std::unique_ptr<IRuntime> m_runtime{};
+	CreateRuntime m_nextRuntime{};
 
-	float m_dtScale{1.0f};
+	RuntimeState m_runtimeState{};
 
 	DebugStats m_debugStats{};
 };
