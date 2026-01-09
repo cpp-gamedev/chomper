@@ -114,7 +114,7 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		return ret;
 	}();
 	auto const windowTitle = std::format("chomper {}", buildVersionStr);
-	static constexpr auto windowSize_v = glm::ivec2{800, 800};
+	static constexpr auto windowSize_v = glm::ivec2{viewport_v.world_size};
 	static constexpr auto windowFlags_v = le::default_window_flags_v & ~le::WindowFlag::Visible;
 
 	auto const windowSize = m_prefs.getWindowSize().value_or(windowSize_v);

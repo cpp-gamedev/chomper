@@ -13,7 +13,7 @@ Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine-
 void Game::tick(kvf::Seconds const dt) {
 	m_player->tick(dt);
 
-	ImGui::SetNextWindowSize({300.0f, 200.0f}, ImGuiCond_Once);
+	ImGui::SetNextWindowSize({300.0f, 300.0f}, ImGuiCond_Once);
 	if (ImGui::Begin("Debug Inspect")) {
 		debugInspectWindow();
 	}

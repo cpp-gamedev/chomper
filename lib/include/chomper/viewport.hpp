@@ -2,5 +2,5 @@
 #include <le2d/viewport.hpp>
 
 namespace chomper {
-constexpr auto viewport_v = le::viewport::Letterbox{.world_size = glm::vec2{512.f}};
-};
+constexpr auto viewport_v = le::viewport::Letterbox{.world_size = glm::vec2{800.f}};
+} // namespace chomper
