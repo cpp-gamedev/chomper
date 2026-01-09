@@ -63,6 +63,7 @@ class Engine : public IDebugInspector, public klib::Pinned {
 
 	void inspectStats();
 	void inspectVsync();
+	void inspectDtScale();
 
 	void processEvents();
 
@@ -75,6 +76,8 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	le::input::Router m_inputRouter{};
 
 	std::unique_ptr<IRuntime> m_runtime{};
+
+	float m_dtScale{1.0f};
 
 	DebugStats m_debugStats{};
 };
