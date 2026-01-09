@@ -1,5 +1,5 @@
 #include "chomper/snake.hpp"
-#include "chomper/world_size.hpp"
+#include "chomper/world_space.hpp"
 #include <imgui.h>
 #include <klib/fixed_string.hpp>
 
@@ -60,7 +60,7 @@ void Snake::grow() {
 	instance.tint = snakeBodyColor_v;
 	// no reason to move on initialization
 	if (!m_instances.empty()) {
-		instance.transform.position = m_instances.back().transform.position + headingToDir_v[m_heading] * tileSize_v;
+		instance.transform.position = worldSpace::gridToWorld(worldSpace::worldToGrid(m_instances.back().transform.position) + headingToDir_v[m_heading]);
 	}
 
 	m_instances.push_back(instance);
