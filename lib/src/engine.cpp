@@ -1,7 +1,7 @@
 #include "chomper/engine.hpp"
 #include "chomper/build_version.hpp"
 #include "chomper/inclusive_range.hpp"
-#include "chomper/runtimes/game.hpp"
+#include "chomper/runtimes/entrypoint.hpp"
 #include "chomper/viewport.hpp"
 #include <imgui.h>
 #include <klib/assert.hpp>
@@ -15,7 +15,7 @@ namespace {
 constexpr auto clearColor_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
 
 std::unique_ptr<IRuntime> createEntrypoint(Engine& engine) {
-	return std::make_unique<runtime::Game>(&engine);
+	return std::make_unique<runtime::Entrypoint>(&engine);
 }
 } // namespace
 
