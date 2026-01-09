@@ -1,8 +1,8 @@
-#include "chomper/game.hpp"
+#include "chomper/runtimes/game.hpp"
 #include "chomper/im_util.hpp"
 #include <array>
 
-namespace chomper {
+namespace chomper::runtime {
 using ActionValue = le::input::action::Value;
 
 Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine->getInputRouter()) {
@@ -13,7 +13,7 @@ Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine-
 void Game::tick(kvf::Seconds const dt) {
 	m_player->tick(dt);
 
-	ImGui::SetNextWindowSize({300.0f, 200.0f}, ImGuiCond_Once);
+	ImGui::SetNextWindowSize({300.0f, 300.0f}, ImGuiCond_Once);
 	if (ImGui::Begin("Debug Inspect")) {
 		debugInspectWindow();
 	}
@@ -56,4 +56,4 @@ void Game::createPlayer() {
 void Game::onGoBack() {
 	m_log.debug("execute 'go back' action here");
 }
-} // namespace chomper
+} // namespace chomper::runtime
