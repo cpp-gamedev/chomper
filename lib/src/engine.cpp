@@ -13,12 +13,17 @@
 namespace chomper {
 namespace {
 constexpr auto clearColor_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
+
+std::unique_ptr<IRuntime> createEntrypoint(Engine& engine) {
+	return std::make_unique<Game>(&engine);
 }
+} // namespace
+
 Engine::Engine(CreateInfo const& createInfo) : m_prefs(createInfo.prefsPath) {
 	createDataLoader(createInfo.assetsDir);
 	createContext(createInfo);
 	createResources();
-	createRuntime();
+	setNextRuntime(&createEntrypoint);
 
 	m_context->set_visible(true);
 	m_log.info("created");
@@ -30,6 +35,9 @@ void Engine::run() {
 	while (m_context->is_running()) {
 		// initialize next frame.
 		m_context->next_frame();
+
+		checkNextRuntime();
+		KLIB_ASSERT(m_runtime);
 
 		// dispatch events and tick runtime.
 		auto const realDt = deltaTime.tick();
@@ -66,11 +74,26 @@ void Engine::setVsync(le::Vsync const vsync) {
 	m_prefs.setVsync(m_context->get_vsync());
 }
 
+void Engine::setNextRuntime(CreateRuntime callback) {
+	if (!callback) {
+		return;
+	}
+	m_nextRuntime = std::move(callback);
+}
+
 void Engine::debugInspect() {
 	inspectStats();
+
 	ImGui::Separator();
 	inspectVsync();
 	inspectDtScale();
+	ImGui::Checkbox("wireframe", &m_wireframe);
+
+	ImGui::Separator();
+	if (ImGui::Button("restart")) {
+		m_log.info("restarting");
+		setNextRuntime(&createEntrypoint);
+	}
 }
 
 void Engine::createDataLoader(std::string_view assetsDir) {
@@ -116,11 +139,6 @@ void Engine::createResources() {
 	m_resources = std::make_unique<Resources>(std::move(assetLoader));
 }
 
-void Engine::createRuntime() {
-	// Game stores 'this', so Engine must remain address-stable. this is why it inherits from Pinned.
-	m_runtime = std::make_unique<Game>(this);
-}
-
 void Engine::inspectStats() {
 	ImGui::TextUnformatted("stats");
 	auto const dt = std::chrono::duration<float, std::milli>{m_debugStats.frame.total_dt};
@@ -163,6 +181,22 @@ void Engine::inspectDtScale() {
 	if (ImGui::Checkbox("pause", &paused)) {
 		m_dtScale = paused ? 0.0f : 1.0f;
 	}
+}
+
+void Engine::checkNextRuntime() {
+	if (!m_nextRuntime) {
+		return;
+	}
+
+	auto nextRuntime = m_nextRuntime(*this);
+	m_nextRuntime = {};
+	if (!nextRuntime) {
+		m_log.error("Failed to create next Runtime");
+		return;
+	}
+
+	m_runtime = std::move(nextRuntime);
+	m_log.info("[{}] loaded", klib::demangled_name(*m_runtime));
 }
 
 void Engine::processEvents() {
