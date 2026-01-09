@@ -17,9 +17,7 @@ void Entrypoint::tick(kvf::Seconds const dt) {
 		if (key.action != GLFW_PRESS) {
 			return;
 		}
-		m_engine->setNextRuntime([](Engine& engine) {
-			return std::make_unique<Game>(&engine);
-		});
+		m_engine->setNextRuntime<Game>();
 	}};
 	for (auto const& event : m_engine->getContext().event_queue()) {
 		std::visit(visitor, event);

@@ -56,6 +56,14 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	void setVsync(le::Vsync vsync);
 	void setNextRuntime(CreateRuntime callback);
 
+	template <std::derived_from<IRuntime> RuntimeT>
+		requires(std::constructible_from<RuntimeT, Engine*>)
+	void setNextRuntime() {
+		setNextRuntime([](Engine& self) {
+			return std::make_unique<RuntimeT>(&self);
+		});
+	}
+
   private:
 	struct RuntimeState {
 		float dtScale{1.0f};
