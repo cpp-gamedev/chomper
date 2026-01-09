@@ -46,6 +46,7 @@ void Engine::run() {
 		// render runtime.
 		auto& renderer = m_context->begin_render(clearColor_v);
 		renderer.viewport = viewport_v;
+		renderer.polygon_mode = m_wireframe ? vk::PolygonMode::eLine : vk::PolygonMode::eFill;
 
 		m_runtime->render(renderer);
 		renderer.end_render();

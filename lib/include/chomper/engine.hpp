@@ -78,6 +78,7 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	std::unique_ptr<IRuntime> m_runtime{};
 
 	float m_dtScale{1.0f};
+	bool m_wireframe{false};
 
 	DebugStats m_debugStats{};
 };
