@@ -41,7 +41,7 @@ void Engine::run() {
 
 		// dispatch events and tick runtime.
 		auto const realDt = deltaTime.tick();
-		auto scaledDt = m_dtScale * realDt;
+		auto scaledDt = m_runtimeState.dtScale * realDt;
 		static constexpr auto maxDt_v = kvf::Seconds{2.0f};
 		if (scaledDt > maxDt_v) {
 			m_log.warn("giant dt ({}), clamping to max ({})", scaledDt, maxDt_v);
@@ -54,7 +54,7 @@ void Engine::run() {
 		// render runtime.
 		auto& renderer = m_context->begin_render(clearColor_v);
 		renderer.viewport = viewport_v;
-		renderer.polygon_mode = m_wireframe ? vk::PolygonMode::eLine : vk::PolygonMode::eFill;
+		renderer.polygon_mode = m_runtimeState.wireframe ? vk::PolygonMode::eLine : vk::PolygonMode::eFill;
 
 		m_runtime->render(renderer);
 		renderer.end_render();
@@ -87,7 +87,7 @@ void Engine::debugInspect() {
 	ImGui::Separator();
 	inspectVsync();
 	inspectDtScale();
-	ImGui::Checkbox("wireframe", &m_wireframe);
+	ImGui::Checkbox("wireframe", &m_runtimeState.wireframe);
 
 	ImGui::Separator();
 	if (ImGui::Button("restart")) {
@@ -171,15 +171,15 @@ void Engine::inspectVsync() {
 
 void Engine::inspectDtScale() {
 	static constexpr auto range_v = InclusiveRange{.lo = 0.0f, .hi = 3.0f};
-	auto dtScale = m_dtScale;
+	auto dtScale = m_runtimeState.dtScale;
 	if (ImGui::DragFloat("dt scale", &dtScale, 0.05f, range_v.lo, range_v.hi)) {
-		m_dtScale = std::clamp(dtScale, range_v.lo, range_v.hi);
+		m_runtimeState.dtScale = std::clamp(dtScale, range_v.lo, range_v.hi);
 	}
-	KLIB_ASSERT(m_dtScale >= 0.0f);
+	KLIB_ASSERT(m_runtimeState.dtScale >= 0.0f);
 
-	auto paused = m_dtScale == 0.0f;
+	auto paused = m_runtimeState.dtScale == 0.0f;
 	if (ImGui::Checkbox("pause", &paused)) {
-		m_dtScale = paused ? 0.0f : 1.0f;
+		m_runtimeState.dtScale = paused ? 0.0f : 1.0f;
 	}
 }
 
@@ -196,6 +196,7 @@ void Engine::checkNextRuntime() {
 	}
 
 	m_runtime = std::move(nextRuntime);
+	m_runtimeState = {};
 	m_log.info("[{}] loaded", klib::demangled_name(*m_runtime));
 }
 

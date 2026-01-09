@@ -57,6 +57,11 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	void setNextRuntime(CreateRuntime callback);
 
   private:
+	struct RuntimeState {
+		float dtScale{1.0f};
+		bool wireframe{false};
+	};
+
 	// IDebugInspector
 	void debugInspect() final;
 
@@ -82,8 +87,7 @@ class Engine : public IDebugInspector, public klib::Pinned {
 	std::unique_ptr<IRuntime> m_runtime{};
 	CreateRuntime m_nextRuntime{};
 
-	float m_dtScale{1.0f};
-	bool m_wireframe{false};
+	RuntimeState m_runtimeState{};
 
 	DebugStats m_debugStats{};
 };
