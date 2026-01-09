@@ -15,7 +15,7 @@ namespace {
 constexpr auto clearColor_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
 
 std::unique_ptr<IRuntime> createEntrypoint(Engine& engine) {
-	return std::make_unique<Game>(&engine);
+	return std::make_unique<runtime::Game>(&engine);
 }
 } // namespace
 

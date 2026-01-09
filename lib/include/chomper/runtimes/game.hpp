@@ -7,7 +7,7 @@
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
 
-namespace chomper {
+namespace chomper::runtime {
 // driven by Engine, owner (whether indirectly) of all game things.
 class Game : public IRuntime, public klib::Pinned {
   public:
@@ -40,4 +40,4 @@ class Game : public IRuntime, public klib::Pinned {
 	std::unique_ptr<Player> m_player{};
 	std::unique_ptr<World> m_world{};
 };
-} // namespace chomper
+} // namespace chomper::runtime
