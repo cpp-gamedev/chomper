@@ -12,8 +12,6 @@ void World::draw(le::IRenderer& renderer) const {
 }
 
 void World::createGrid() {
-	m_gridQuad.create(viewport_v.world_size);
-
 	// Make the bitmap
 	auto bitmap = kvf::ColorBitmap{glm::vec2{2}};
 	bitmap[0, 0] = kvf::Color{0xAAD751FF};
@@ -26,7 +24,8 @@ void World::createGrid() {
 	m_gridTexture->overwrite(bitmap.bitmap());
 
 	m_gridQuad.texture = m_gridTexture.get();
-	m_gridQuad.create(m_gridQuad.get_rect(), kvf::UvRect{.lt = {0.f, 0.f}, .rb = worldSize_v * 0.5f}); // * 0.5f, since each texture is 2x2 tiles
+	auto const rect = kvf::Rect<>::from_size(viewport_v.world_size);
+	m_gridQuad.create(rect, kvf::UvRect{.rb = worldSize_v * 0.5f}); // * 0.5f, since each texture is 2x2 tiles
 }
 
 } // namespace chomper

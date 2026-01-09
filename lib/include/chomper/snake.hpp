@@ -1,5 +1,6 @@
 #pragma once
 #include "chomper/controller.hpp"
+#include "chomper/world_size.hpp"
 #include <klib/log.hpp>
 #include <kvf/time.hpp>
 #include <le2d/drawable/shape.hpp>
@@ -25,7 +26,7 @@ class Snake {
 	std::vector<Heading> m_headingQueue{};
 
 	std::deque<le::RenderInstance> m_instances{};
-	le::drawable::InstancedQuad m_quads{};
+	le::drawable::InstancedQuad m_quads{tileSize_v};
 
 	kvf::Seconds m_moveTimer{};
 	// bool to decide wether to remove the tail, turn false if the snake has eaten

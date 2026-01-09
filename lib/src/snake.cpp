@@ -13,7 +13,6 @@ constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::vec2>{glm::vec2{1.
 
 Snake::Snake() {
 	// initialize snake body
-	m_quads.create(tileSize_v);
 	grow();
 }
 
