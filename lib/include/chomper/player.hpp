@@ -19,7 +19,8 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	void draw(le::IRenderer& renderer) const;
 
   private:
-	bool selfCollides();
+	bool selfCollides() const;
+	void move();
 
 	// IController::IListener
 	void onSetHeading(Heading heading) final;

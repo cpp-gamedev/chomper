@@ -3,6 +3,7 @@
 #include "chomper/engine.hpp"
 #include "chomper/runtimes/entrypoint.hpp"
 #include "chomper/world_space.hpp"
+#include <algorithm>
 
 namespace chomper {
 namespace {
@@ -10,6 +11,7 @@ constexpr auto moveSpeed_v = kvf::Seconds{0.135f};
 constexpr auto oppositeHeading_v = klib::EnumArray<Heading, Heading>{Heading::West, Heading::South, Heading::East, Heading::North};
 constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::vec2>{glm::vec2{1.f, 0.f}, glm::vec2{0.f, 1.f}, glm::vec2{-1.f, 0.f}, glm::vec2{0.f, -1.f}};
 } // namespace
+
 Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine*> engine) : m_engine(engine) {
 	createController(mapping);
 }
@@ -19,6 +21,17 @@ void Player::tick(kvf::Seconds dt) {
 
 	m_moveTimer += dt;
 
+	move();
+}
+
+bool Player::selfCollides() const {
+	auto targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
+	return std::any_of(m_snake.getSegments().begin(), m_snake.getSegments().end(), [targetGrid](le::RenderInstance const& s) {
+		return worldSpace::worldToGrid(s.transform.position) == targetGrid;
+	});
+}
+
+void Player::move() {
 	if (m_moveTimer >= moveSpeed_v) {
 		m_moveTimer = {};
 
@@ -38,27 +51,18 @@ void Player::tick(kvf::Seconds dt) {
 			} else {
 				m_graceMove = true;
 			}
-		} else {
-			m_snake.grow(m_heading);
 
-			if (m_shouldPop) {
-				m_snake.popTail();
-			}
-
-			m_graceMove = false;
+			return;
 		}
-	}
-}
 
-bool Player::selfCollides() {
-	auto targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
-	for (auto const& seg : m_snake.getSegments()) {
-		if (worldSpace::worldToGrid(seg.transform.position) == targetGrid) {
-			return true;
+		m_snake.grow(m_heading);
+
+		if (m_shouldPop) {
+			m_snake.popTail();
 		}
-	}
 
-	return false;
+		m_graceMove = false;
+	}
 }
 
 void Player::draw(le::IRenderer& renderer) const {

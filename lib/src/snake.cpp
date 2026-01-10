@@ -29,15 +29,17 @@ void Snake::grow(Heading heading) {
 
 	m_instances.push_back(instance);
 
-	m_quads.instances.clear();
-	m_quads.instances.reserve(m_instances.size());
-	std::ranges::copy(m_instances, std::back_inserter(m_quads.instances));
+	syncQuads();
 }
 
 void Snake::popTail() {
 	if (!m_instances.empty()) {
 		m_instances.erase(m_instances.begin());
 	}
+	syncQuads();
+}
+
+void Snake::syncQuads() {
 	m_quads.instances.clear();
 	m_quads.instances.reserve(m_instances.size());
 	std::ranges::copy(m_instances, std::back_inserter(m_quads.instances));

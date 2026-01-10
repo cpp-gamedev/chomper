@@ -20,6 +20,8 @@ class Snake {
 	}
 
   private:
+	void syncQuads();
+
 	std::deque<le::RenderInstance> m_instances{};
 	le::drawable::InstancedQuad m_quads{tileSize_v};
 
