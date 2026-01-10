@@ -50,7 +50,7 @@ void Game::createPlayer() {
 	// rebind game actions.
 	bindActions();
 	// create the player, passing a reference of the logger and a reference of the input mapping to create its PlayerController.
-	m_player = std::make_unique<Player>(m_mapping);
+	m_player = std::make_unique<Player>(m_mapping, m_engine);
 }
 
 void Game::onGoBack() {

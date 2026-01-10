@@ -10,27 +10,20 @@ namespace chomper {
 class Snake {
   public:
 	explicit Snake();
-	void tick(kvf::Seconds dt);
 	void draw(le::IRenderer& renderer) const;
 
-	void setHeading(Heading heading);
-	void debugInspect();
+	void grow(Heading heading);
+	void popTail();
+
+	[[nodiscard]] std::span<le::RenderInstance const> getSegments() const {
+		return m_quads.instances;
+	}
 
   private:
-	void popTail();
-	void grow();
-
-	klib::TypedLogger<Snake> m_log{};
-
-	Heading m_heading{};
-	std::vector<Heading> m_headingQueue{};
-
 	std::deque<le::RenderInstance> m_instances{};
 	le::drawable::InstancedQuad m_quads{tileSize_v};
 
-	kvf::Seconds m_moveTimer{};
-	// bool to decide wether to remove the tail, turn false if the snake has eaten
-	bool m_shouldPop = true;
+	size_t m_baseSize{6};
 };
 
 } // namespace chomper
