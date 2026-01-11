@@ -19,7 +19,8 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	void draw(le::IRenderer& renderer) const;
 
   private:
-	bool selfCollides() const;
+	[[nodiscard]] bool isCollidingWithSelf(glm::vec2 targetGrid) const;
+	[[nodiscard]] bool isCollidingWithWall(glm::vec2 targetGrid) const;
 	void move();
 
 	// IController::IListener

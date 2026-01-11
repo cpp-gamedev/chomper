@@ -1,5 +1,6 @@
 #pragma once
 #include "chomper/world_size.hpp"
+#include "glm/common.hpp"
 #include <glm/vec2.hpp>
 
 namespace chomper::worldSpace {
@@ -15,5 +16,9 @@ constexpr auto gridToWorld(glm::vec2 gridPosition) {
 }
 constexpr auto worldToGrid(glm::vec2 worldPosition) {
 	return glm::floor((worldPosition - tileOffset) / tileSize_v) + halfGridSize;
+}
+
+constexpr auto isOutOfBounds(glm::vec2 gridPoint) {
+	return gridPoint.x <= 0 || gridPoint.y <= 0 || gridPoint.x > worldSize_v.x || gridPoint.y > worldSize_v.y;
 }
 } // namespace chomper::worldSpace

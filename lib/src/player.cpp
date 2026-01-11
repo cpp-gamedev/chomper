@@ -27,11 +27,20 @@ void Player::tick(kvf::Seconds dt) {
 	}
 }
 
-bool Player::selfCollides() const {
-	auto targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
+bool Player::isCollidingWithSelf(glm::vec2 const targetGrid) const {
+	if (m_snake.getSegments().empty()) {
+		return false;
+	}
 	return std::ranges::any_of(m_snake.getSegments(), [targetGrid](le::RenderInstance const& s) {
 		return worldSpace::worldToGrid(s.transform.position) == targetGrid;
 	});
+}
+
+bool Player::isCollidingWithWall(glm::vec2 const targetGrid) const {
+	if (m_snake.getSegments().empty()) {
+		return false;
+	}
+	return worldSpace::isOutOfBounds(targetGrid);
 }
 
 void Player::move() {
@@ -45,7 +54,8 @@ void Player::move() {
 		m_headingQueue.erase(m_headingQueue.begin());
 	}
 
-	if (selfCollides()) {
+	auto const targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
+	if (isCollidingWithSelf(targetGrid) || isCollidingWithWall(targetGrid)) {
 		if (m_graceMove) {
 			m_engine->setNextRuntime<runtime::Entrypoint>();
 		} else {
