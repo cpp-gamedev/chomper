@@ -34,6 +34,11 @@ bool Player::selfCollides() const {
 	});
 }
 
+bool Player::wallCollides() const {
+	auto targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
+	return targetGrid.x <= 0 || targetGrid.y <= 0 || targetGrid.x > worldSize_v.x || targetGrid.y > worldSize_v.y;
+}
+
 void Player::move() {
 	// no body, no movement
 	if (m_snake.getSegments().empty()) {
@@ -45,7 +50,7 @@ void Player::move() {
 		m_headingQueue.erase(m_headingQueue.begin());
 	}
 
-	if (selfCollides()) {
+	if (selfCollides() || wallCollides()) {
 		if (m_graceMove) {
 			m_engine->setNextRuntime<runtime::Entrypoint>();
 		} else {

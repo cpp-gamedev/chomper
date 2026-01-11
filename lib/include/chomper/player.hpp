@@ -20,6 +20,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 
   private:
 	bool selfCollides() const;
+	bool wallCollides() const;
 	void move();
 
 	// IController::IListener
