@@ -27,16 +27,22 @@ void Player::tick(kvf::Seconds dt) {
 	}
 }
 
-bool Player::selfCollides() const {
-	auto targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
+bool Player::isCollidingWithSelf() const {
+	if (m_snake.getSegments().empty()) {
+		return false;
+	}
+	auto const targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
 	return std::ranges::any_of(m_snake.getSegments(), [targetGrid](le::RenderInstance const& s) {
 		return worldSpace::worldToGrid(s.transform.position) == targetGrid;
 	});
 }
 
-bool Player::wallCollides() const {
-	auto targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
-	return targetGrid.x <= 0 || targetGrid.y <= 0 || targetGrid.x > worldSize_v.x || targetGrid.y > worldSize_v.y;
+bool Player::isCollidingWithWall() const {
+	if (m_snake.getSegments().empty()) {
+		return false;
+	}
+	auto const targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
+	return worldSpace::isOutOfBounds(targetGrid);
 }
 
 void Player::move() {
@@ -50,7 +56,7 @@ void Player::move() {
 		m_headingQueue.erase(m_headingQueue.begin());
 	}
 
-	if (selfCollides() || wallCollides()) {
+	if (isCollidingWithSelf() || isCollidingWithWall()) {
 		if (m_graceMove) {
 			m_engine->setNextRuntime<runtime::Entrypoint>();
 		} else {

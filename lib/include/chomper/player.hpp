@@ -19,8 +19,8 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	void draw(le::IRenderer& renderer) const;
 
   private:
-	bool selfCollides() const;
-	bool wallCollides() const;
+	[[nodiscard]] bool isCollidingWithSelf() const;
+	[[nodiscard]] bool isCollidingWithWall() const;
 	void move();
 
 	// IController::IListener
