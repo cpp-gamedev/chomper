@@ -21,48 +21,47 @@ void Player::tick(kvf::Seconds dt) {
 
 	m_moveTimer += dt;
 
-	move();
+	if (m_moveTimer >= moveSpeed_v) {
+		m_moveTimer = {};
+		move();
+	}
 }
 
 bool Player::selfCollides() const {
 	auto targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
-	return std::any_of(m_snake.getSegments().begin(), m_snake.getSegments().end(), [targetGrid](le::RenderInstance const& s) {
+	return std::ranges::any_of(m_snake.getSegments(), [targetGrid](le::RenderInstance const& s) {
 		return worldSpace::worldToGrid(s.transform.position) == targetGrid;
 	});
 }
 
 void Player::move() {
-	if (m_moveTimer >= moveSpeed_v) {
-		m_moveTimer = {};
-
-		// no body, no movement
-		if (m_snake.getSegments().empty()) {
-			return;
-		}
-
-		if (!m_headingQueue.empty()) {
-			m_heading = m_headingQueue.front();
-			m_headingQueue.erase(m_headingQueue.begin());
-		}
-
-		if (selfCollides()) {
-			if (m_graceMove) {
-				m_engine->setNextRuntime<runtime::Entrypoint>();
-			} else {
-				m_graceMove = true;
-			}
-
-			return;
-		}
-
-		m_snake.grow(m_heading);
-
-		if (m_shouldPop) {
-			m_snake.popTail();
-		}
-
-		m_graceMove = false;
+	// no body, no movement
+	if (m_snake.getSegments().empty()) {
+		return;
 	}
+
+	if (!m_headingQueue.empty()) {
+		m_heading = m_headingQueue.front();
+		m_headingQueue.erase(m_headingQueue.begin());
+	}
+
+	if (selfCollides()) {
+		if (m_graceMove) {
+			m_engine->setNextRuntime<runtime::Entrypoint>();
+		} else {
+			m_graceMove = true;
+		}
+
+		return; // return so you don't move when you collide
+	}
+
+	m_snake.grow(m_heading);
+
+	if (m_shouldPop) {
+		m_snake.popTail();
+	}
+
+	m_graceMove = false;
 }
 
 void Player::draw(le::IRenderer& renderer) const {

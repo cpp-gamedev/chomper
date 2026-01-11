@@ -33,9 +33,10 @@ void Snake::grow(Heading heading) {
 }
 
 void Snake::popTail() {
-	if (!m_instances.empty()) {
-		m_instances.erase(m_instances.begin());
+	if (m_instances.empty()) {
+		return;
 	}
+	m_instances.erase(m_instances.begin());
 	syncQuads();
 }
 
