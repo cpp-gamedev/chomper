@@ -1,7 +1,6 @@
 #include "chomper/player.hpp"
 #include "chomper/controllers/player_controller.hpp"
 #include "chomper/engine.hpp"
-#include "chomper/runtimes/entrypoint.hpp"
 #include "chomper/world_space.hpp"
 #include <algorithm>
 
@@ -12,7 +11,7 @@ constexpr auto oppositeHeading_v = klib::EnumArray<Heading, Heading>{Heading::We
 constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::vec2>{glm::vec2{1.f, 0.f}, glm::vec2{0.f, 1.f}, glm::vec2{-1.f, 0.f}, glm::vec2{0.f, -1.f}};
 } // namespace
 
-Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine*> engine) : m_engine(engine) {
+Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine) : m_engine(engine) {
 	createController(mapping);
 }
 
@@ -25,6 +24,10 @@ void Player::tick(kvf::Seconds dt) {
 		m_moveTimer = {};
 		move();
 	}
+}
+
+Player::Info Player::getInfo() const {
+	return m_info;
 }
 
 bool Player::isCollidingWithSelf(glm::vec2 const targetGrid) const {
@@ -57,7 +60,7 @@ void Player::move() {
 	auto const targetGrid = worldSpace::worldToGrid(m_snake.getSegments().back().transform.position) + headingToDir_v[m_heading];
 	if (isCollidingWithSelf(targetGrid) || isCollidingWithWall(targetGrid)) {
 		if (m_graceMove) {
-			m_engine->setNextRuntime<runtime::Entrypoint>();
+			m_info.alive = false;
 		} else {
 			m_graceMove = true;
 		}

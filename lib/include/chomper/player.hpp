@@ -13,10 +13,16 @@ class Engine;
 
 class Player : public IController::IListener, public IDebugInspector, public klib::Pinned {
   public:
-	explicit Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine*> engine);
+	struct Info {
+		bool alive = true;
+	};
+
+	explicit Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine);
 
 	void tick(kvf::Seconds dt);
 	void draw(le::IRenderer& renderer) const;
+
+	[[nodiscard]] Info getInfo() const;
 
   private:
 	[[nodiscard]] bool isCollidingWithSelf(glm::vec2 targetGrid) const;
@@ -33,11 +39,13 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 
 	klib::TypedLogger<Player> m_log{};
 
-	gsl::not_null<Engine*> m_engine;
+	gsl::not_null<Engine const*> m_engine;
 
 	std::unique_ptr<IController> m_controller{};
 
 	Snake m_snake{};
+
+	Info m_info{};
 
 	Heading m_heading{};
 	std::vector<Heading> m_headingQueue{};

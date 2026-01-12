@@ -1,5 +1,6 @@
 #include "chomper/runtimes/game.hpp"
 #include "chomper/im_util.hpp"
+#include "chomper/runtimes/entrypoint.hpp"
 #include <array>
 
 namespace chomper::runtime {
@@ -18,6 +19,11 @@ void Game::tick(kvf::Seconds const dt) {
 		debugInspectWindow();
 	}
 	ImGui::End();
+
+	// On death
+	if (!m_player->getInfo().alive) {
+		m_engine->setNextRuntime<runtime::Entrypoint>();
+	}
 }
 
 void Game::render(le::IRenderer& renderer) const {
