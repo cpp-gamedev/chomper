@@ -22,7 +22,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	void tick(kvf::Seconds dt);
 	void draw(le::IRenderer& renderer) const;
 
-	[[nodiscard]] Info getInfo() const;
+	[[nodiscard]] Info const& getInfo() const;
 
   private:
 	[[nodiscard]] bool isCollidingWithSelf(glm::vec2 targetGrid) const;

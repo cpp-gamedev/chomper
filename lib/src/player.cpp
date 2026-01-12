@@ -16,6 +16,10 @@ Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine con
 }
 
 void Player::tick(kvf::Seconds dt) {
+	if (!m_info.alive) {
+		return;
+	}
+
 	m_controller->tick(dt);
 
 	m_moveTimer += dt;
@@ -26,7 +30,7 @@ void Player::tick(kvf::Seconds dt) {
 	}
 }
 
-Player::Info Player::getInfo() const {
+Player::Info const& Player::getInfo() const {
 	return m_info;
 }
 
