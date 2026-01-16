@@ -1,5 +1,7 @@
 #include "chomper/snake.hpp"
+#include "chomper/world_size.hpp"
 #include "chomper/world_space.hpp"
+#include "le2d/render_instance.hpp"
 #include <imgui.h>
 #include <klib/fixed_string.hpp>
 
@@ -10,6 +12,10 @@ constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::vec2>{glm::vec2{1.
 } // namespace
 
 Snake::Snake() {
+	le::RenderInstance instance{};
+	instance.tint = snakeBodyColor_v;
+	instance.transform.position = worldSpace::gridToWorld({0, worldSize_v.y / 2});
+	m_instances.push_back(instance);
 	while (m_instances.size() < m_baseSize) {
 		grow({});
 	}
