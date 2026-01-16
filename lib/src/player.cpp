@@ -30,10 +30,6 @@ void Player::tick(kvf::Seconds dt) {
 	}
 }
 
-Player::Info const& Player::getInfo() const {
-	return m_info;
-}
-
 bool Player::isCollidingWithSelf(glm::vec2 const targetGrid) const {
 	if (m_snake.getSegments().empty()) {
 		return false;

@@ -2,6 +2,7 @@
 #include "chomper/controller.hpp"
 #include "chomper/debug_inspector.hpp"
 #include "chomper/snake.hpp"
+#include "le2d/render_instance.hpp"
 #include <imgui.h>
 #include <klib/log.hpp>
 #include <le2d/input/action.hpp>
@@ -22,7 +23,12 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	void tick(kvf::Seconds dt);
 	void draw(le::IRenderer& renderer) const;
 
-	[[nodiscard]] Info const& getInfo() const;
+	[[nodiscard]] Info const& getInfo() const {
+		return m_info;
+	}
+	[[nodiscard]] std::span<le::RenderInstance const> getSegments() const {
+		return m_snake.getSegments();
+	}
 
   private:
 	[[nodiscard]] bool isCollidingWithSelf(glm::vec2 targetGrid) const;
