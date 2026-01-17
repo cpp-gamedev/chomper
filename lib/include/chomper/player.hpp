@@ -2,6 +2,7 @@
 #include "chomper/controller.hpp"
 #include "chomper/debug_inspector.hpp"
 #include "chomper/snake.hpp"
+#include "le2d/drawable/text.hpp"
 #include "le2d/render_instance.hpp"
 #include <imgui.h>
 #include <klib/log.hpp>
@@ -16,6 +17,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
   public:
 	struct Info {
 		bool alive = true;
+		size_t score{};
 	};
 
 	explicit Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine);
@@ -36,6 +38,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	[[nodiscard]] bool isCollidingWithSelf(glm::vec2 targetGrid) const;
 	[[nodiscard]] bool isCollidingWithWall(glm::vec2 targetGrid) const;
 	void move();
+	void updateScoreText();
 
 	// IController::IListener
 	void onSetHeading(Heading heading) final;
@@ -52,6 +55,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	std::unique_ptr<IController> m_controller{};
 
 	Snake m_snake{};
+	le::drawable::Text m_scoreText{};
 
 	Info m_info{};
 

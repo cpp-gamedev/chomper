@@ -1,6 +1,7 @@
 #include "chomper/player.hpp"
 #include "chomper/controllers/player_controller.hpp"
 #include "chomper/engine.hpp"
+#include "chomper/world_size.hpp"
 #include "chomper/world_space.hpp"
 #include <algorithm>
 
@@ -13,6 +14,7 @@ constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::vec2>{glm::vec2{1.
 
 Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine) : m_engine(engine) {
 	createController(mapping);
+	updateScoreText();
 }
 
 void Player::tick(kvf::Seconds dt) {
@@ -31,6 +33,8 @@ void Player::tick(kvf::Seconds dt) {
 }
 
 void Player::grow() {
+	m_info.score++;
+	updateScoreText();
 	m_shouldPop = false;
 }
 
@@ -82,8 +86,18 @@ void Player::move() {
 	m_graceMove = false; // reset graceMove
 }
 
+void Player::updateScoreText() {
+	static constexpr auto textParams_v = le::drawable::Text::Params{
+		.height = le::TextHeight{16},
+	};
+
+	m_scoreText.set_string(m_engine->getResources().getMainFont(), std::format("Score: {}", m_info.score), textParams_v);
+	m_scoreText.transform.position = worldSpace::gridToWorld({0, worldSize_v.y - 1}) + glm::vec2{m_scoreText.get_size().x / 2, 0};
+}
+
 void Player::draw(le::IRenderer& renderer) const {
 	m_snake.draw(renderer);
+	m_scoreText.draw(renderer);
 }
 
 void Player::debugInspect() {
