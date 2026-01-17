@@ -119,9 +119,9 @@ void Game::collideCollectibles() {
 	for (auto it = m_collectibles.begin(); it != m_collectibles.end();) {
 		if (it->getGridPosition() == worldSpace::worldToGrid(m_player->getSegments().back().transform.position)) {
 
-			m_collectibles.erase(it);	// erase collided collectible
-			m_player->shouldPop(false); // tell the player to not pop the tail/grow
-			spawnCollectible();			// spawn new collectible
+			m_collectibles.erase(it); // erase collided collectible
+			m_player->grow();		  // tell the player to not pop the tail/grow
+			spawnCollectible();		  // spawn new collectible
 
 			return;
 		}
