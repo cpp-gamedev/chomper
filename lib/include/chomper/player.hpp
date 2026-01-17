@@ -23,7 +23,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	void tick(kvf::Seconds dt);
 	void draw(le::IRenderer& renderer) const;
 
-	void shouldPop(bool v);
+	void grow();
 
 	[[nodiscard]] Info const& getInfo() const {
 		return m_info;

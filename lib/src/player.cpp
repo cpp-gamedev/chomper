@@ -30,8 +30,8 @@ void Player::tick(kvf::Seconds dt) {
 	}
 }
 
-void Player::shouldPop(bool v) {
-	m_shouldPop = v;
+void Player::grow() {
+	m_shouldPop = false;
 }
 
 bool Player::isCollidingWithSelf(glm::vec2 const targetGrid) const {
