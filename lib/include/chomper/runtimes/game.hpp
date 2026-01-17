@@ -48,5 +48,7 @@ class Game : public IRuntime, public klib::Pinned {
 	std::unique_ptr<World> m_world{};
 	std::vector<Collectible> m_collectibles{};
 	le::ITexture* m_collectibleTexture{};
+
+	size_t m_collectibleAmount = 10;
 };
 } // namespace chomper::runtime

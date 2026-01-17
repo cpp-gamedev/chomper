@@ -19,7 +19,10 @@ Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine-
 	createPlayer();
 	m_world = std::make_unique<World>(m_engine);
 	createCollectibleTexture();
-	spawnCollectible();
+
+	for (size_t i = 0; i < m_collectibleAmount; ++i) {
+		spawnCollectible();
+	}
 }
 
 void Game::tick(kvf::Seconds const dt) {
