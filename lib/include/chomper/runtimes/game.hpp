@@ -1,11 +1,14 @@
 #pragma once
+#include "chomper/collectible.hpp"
 #include "chomper/engine.hpp"
 #include "chomper/player.hpp"
 #include "chomper/runtime.hpp"
 #include "chomper/world.hpp"
+#include "le2d/resource/texture.hpp"
 #include <klib/ptr.hpp>
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
+#include <memory>
 
 namespace chomper::runtime {
 // driven by Engine, owner (whether indirectly) of all game things.
@@ -27,6 +30,10 @@ class Game : public IRuntime, public klib::Pinned {
 
 	void bindActions();
 	void createPlayer();
+	void createCollectibleTexture();
+
+	void spawnCollectible();
+	void collideCollectibles();
 
 	void onGoBack();
 
@@ -39,5 +46,7 @@ class Game : public IRuntime, public klib::Pinned {
 
 	std::unique_ptr<Player> m_player{};
 	std::unique_ptr<World> m_world{};
+	std::vector<Collectible> m_collectibles{};
+	le::ITexture* m_collectibleTexture{};
 };
 } // namespace chomper::runtime

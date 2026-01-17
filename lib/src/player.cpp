@@ -30,6 +30,10 @@ void Player::tick(kvf::Seconds dt) {
 	}
 }
 
+void Player::shouldPop(bool v) {
+	m_shouldPop = v;
+}
+
 bool Player::isCollidingWithSelf(glm::vec2 const targetGrid) const {
 	if (m_snake.getSegments().empty()) {
 		return false;
@@ -74,7 +78,8 @@ void Player::move() {
 		m_snake.popTail();
 	}
 
-	m_graceMove = false;
+	m_shouldPop = true;	 // reset shouldPop
+	m_graceMove = false; // reset graceMove
 }
 
 void Player::draw(le::IRenderer& renderer) const {
