@@ -1,7 +1,7 @@
 #pragma once
 #include "chomper/world_space.hpp"
 #include "glm/ext/vector_float2.hpp"
-#include "le2d/drawable/shape.hpp"
+#include "le2d/drawable/sprite.hpp"
 #include "le2d/renderer.hpp"
 #include "le2d/resource/texture.hpp"
 
@@ -13,10 +13,10 @@ class Collectible {
 	void draw(le::IRenderer& renderer) const;
 
 	[[nodiscard]] glm::vec2 getGridPosition() const {
-		return worldSpace::worldToGrid(m_quad.transform.position);
+		return worldSpace::worldToGrid(m_sprite.transform.position);
 	}
 
   private:
-	le::drawable::Quad m_quad{};
+	le::drawable::Sprite m_sprite{};
 };
 } // namespace chomper

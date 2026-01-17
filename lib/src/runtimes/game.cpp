@@ -4,13 +4,8 @@
 #include "chomper/runtimes/entrypoint.hpp"
 #include "chomper/world_size.hpp"
 #include "chomper/world_space.hpp"
-#include "glm/ext/vector_float2.hpp"
-#include "le2d/resource/texture.hpp"
-#include <array>
-#include <memory>
-#include <random>
-#include <unordered_set>
-#include <vector>
+#include <le2d/random.hpp>
+#include <algorithm>
 
 namespace chomper::runtime {
 using ActionValue = le::input::action::Value;
@@ -83,52 +78,45 @@ void Game::createCollectibleTexture() {
 }
 
 void Game::spawnCollectible() {
-	std::unordered_set<int> occupied;
+	m_occupied.clear();
 	for (auto const& seg : m_player->getSegments()) {
 		auto p = worldSpace::worldToGrid(seg.transform.position);
-		occupied.insert(static_cast<int>((p.y * worldSize_v.x) + p.x));
+		m_occupied.insert(static_cast<int>((p.y * worldSize_v.x) + p.x));
 	}
 
 	for (auto const& c : m_collectibles) {
 		auto p = c.getGridPosition();
-		occupied.insert(static_cast<int>((p.y * worldSize_v.x) + p.x));
+		m_occupied.insert(static_cast<int>((p.y * worldSize_v.x) + p.x));
 	}
 
-	auto emptyTiles = (worldSize_v.x * worldSize_v.y) - (float)occupied.size();
+	auto emptyTiles = (worldSize_v.x * worldSize_v.y) - static_cast<float>(m_occupied.size());
 	if (emptyTiles <= 0) {
 		return;
 	}
 
-	std::mt19937 rng(std::random_device{}());
-	std::uniform_int_distribution<int> dist(0, (int)emptyTiles - 1);
-	auto target = dist(rng);
+	auto random = m_random.next_int(0, static_cast<int>(emptyTiles - 1));
 
 	auto count = 0;
-	for (float y = 0; y < worldSize_v.y; ++y) {
-		for (float x = 0; x < worldSize_v.x; ++x) {
-			auto id = static_cast<int>((y * worldSize_v.x) + x);
-			if (!occupied.contains(id)) {
-				if (count == target) {
-					m_collectibles.emplace_back(*m_collectibleTexture, worldSpace::gridToWorld({x, y}));
-					return;
-				}
-				count++;
-			}
+	auto const width = static_cast<int>(worldSize_v.x);
+	for (int index = 0; index < static_cast<int>(worldSize_v.x * worldSize_v.y); index++) {
+		if (m_occupied.contains(index)) {
+			continue;
+		}
+		if (count++ == random) {
+			m_collectibles.emplace_back(*m_collectibleTexture, worldSpace::gridToWorld({index % width, index / width}));
+			return;
 		}
 	}
 }
 
 void Game::collideCollectibles() {
-	for (auto it = m_collectibles.begin(); it != m_collectibles.end();) {
-		if (it->getGridPosition() == worldSpace::worldToGrid(m_player->getSegments().back().transform.position)) {
-
-			m_collectibles.erase(it); // erase collided collectible
-			m_player->grow();		  // tell the player to not pop the tail/grow
-			spawnCollectible();		  // spawn new collectible
-
-			return;
-		}
-		it++;
+	auto it = std::ranges::find_if(m_collectibles, [&](auto const& collectible) {
+		return collectible.getGridPosition() == worldSpace::worldToGrid(m_player->getSegments().back().transform.position);
+	});
+	if (it != m_collectibles.end()) {
+		m_collectibles.erase(it);
+		m_player->grow();
+		spawnCollectible();
 	}
 }
 
