@@ -4,6 +4,7 @@
 #include "chomper/runtime.hpp"
 #include "chomper/world.hpp"
 #include <klib/ptr.hpp>
+#include <le2d/drawable/text.hpp>
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
 
@@ -39,5 +40,8 @@ class Game : public IRuntime, public klib::Pinned {
 
 	std::unique_ptr<Player> m_player{};
 	std::unique_ptr<World> m_world{};
+
+	le::drawable::Text m_countdownText{};
+	kvf::Seconds m_countdown{3};
 };
 } // namespace chomper::runtime
