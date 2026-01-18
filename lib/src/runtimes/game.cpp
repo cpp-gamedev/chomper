@@ -8,28 +8,46 @@
 #include <algorithm>
 
 namespace chomper::runtime {
+namespace {
+constexpr auto countdownParams_v = le::drawable::Text::Params{
+	.height = le::TextHeight{60},
+};
+}
 using ActionValue = le::input::action::Value;
 
 Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine->getInputRouter()) {
 	createPlayer();
 	m_world = std::make_unique<World>(m_engine);
+
 	createCollectibleTexture();
 
 	for (size_t i = 0; i < m_collectibleAmount; ++i) {
 		spawnCollectible();
 	}
+  
+  m_countdownText.set_string(engine->getResources().getMainFont(), "3", countdownParams_v);
 }
 
 void Game::tick(kvf::Seconds const dt) {
 	m_player->tick(dt);
 
 	collideCollectibles();
+}
 
+void Game::tick(kvf::Seconds const dt) {
 	ImGui::SetNextWindowSize({300.0f, 300.0f}, ImGuiCond_Once);
 	if (ImGui::Begin("Debug Inspect")) {
 		debugInspectWindow();
 	}
 	ImGui::End();
+
+	if (m_countdown.count() > 0) {
+		m_countdown -= dt;
+		m_countdownText.set_string(m_engine->getResources().getMainFont(), std::format("{}", static_cast<int>(m_countdown.count() + 1)), countdownParams_v);
+		return;
+	}
+
+	m_player->tick(dt);
 
 	// On death
 	if (!m_player->getInfo().alive) {
@@ -42,6 +60,9 @@ void Game::render(le::IRenderer& renderer) const {
 	m_player->draw(renderer);
 	for (auto const& collectible : m_collectibles) {
 		collectible.draw(renderer);
+  }
+	if (m_countdown.count() > 0) {
+		m_countdownText.draw(renderer);
 	}
 }
 

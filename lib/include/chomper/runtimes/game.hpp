@@ -7,6 +7,7 @@
 #include "le2d/random.hpp"
 #include "le2d/resource/texture.hpp"
 #include <klib/ptr.hpp>
+#include <le2d/drawable/text.hpp>
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
 #include <unordered_set>
@@ -54,5 +55,8 @@ class Game : public IRuntime, public klib::Pinned {
 	klib::Ptr<le::ITexture const> m_collectibleTexture{};
 
 	size_t m_collectibleAmount = 10;
+
+	le::drawable::Text m_countdownText{};
+	kvf::Seconds m_countdown{3};
 };
 } // namespace chomper::runtime
