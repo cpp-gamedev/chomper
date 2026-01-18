@@ -117,12 +117,12 @@ void Player::createController(le::input::ScopedActionMapping& mapping) {
 
 void Player::onSetHeading(Heading const heading) {
 	auto lastHeading = m_headingQueue.empty() ? m_heading : m_headingQueue.back();
-	if (heading == m_heading || heading == oppositeHeading_v[lastHeading]) {
+	if (heading == lastHeading || heading == oppositeHeading_v[lastHeading]) {
 		return;
 	}
 
 	if (m_headingQueue.size() < 3) {
-		m_log.debug("changing heading from {} to {}", headingName_v[m_heading], headingName_v[heading]);
+		m_log.debug("changing heading from {} to {}", headingName_v[lastHeading], headingName_v[heading]);
 		m_headingQueue.push_back(heading);
 	}
 }
