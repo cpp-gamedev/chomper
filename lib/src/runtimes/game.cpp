@@ -24,14 +24,8 @@ Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine-
 	for (size_t i = 0; i < m_collectibleAmount; ++i) {
 		spawnCollectible();
 	}
-  
-  m_countdownText.set_string(engine->getResources().getMainFont(), "3", countdownParams_v);
-}
 
-void Game::tick(kvf::Seconds const dt) {
-	m_player->tick(dt);
-
-	collideCollectibles();
+	m_countdownText.set_string(engine->getResources().getMainFont(), "3", countdownParams_v);
 }
 
 void Game::tick(kvf::Seconds const dt) {
@@ -49,6 +43,8 @@ void Game::tick(kvf::Seconds const dt) {
 
 	m_player->tick(dt);
 
+	collideCollectibles();
+
 	// On death
 	if (!m_player->getInfo().alive) {
 		m_engine->setNextRuntime<runtime::Entrypoint>();
@@ -60,7 +56,7 @@ void Game::render(le::IRenderer& renderer) const {
 	m_player->draw(renderer);
 	for (auto const& collectible : m_collectibles) {
 		collectible.draw(renderer);
-  }
+	}
 	if (m_countdown.count() > 0) {
 		m_countdownText.draw(renderer);
 	}
