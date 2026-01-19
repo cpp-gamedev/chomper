@@ -52,10 +52,10 @@ void Game::tick(kvf::Seconds const dt) {
 
 void Game::render(le::IRenderer& renderer) const {
 	m_world->draw(renderer);
-	m_player->draw(renderer);
 	for (auto const& collectible : m_collectibles) {
 		collectible.draw(renderer);
 	}
+	m_player->draw(renderer);
 	if (m_countdown.count() > 0) {
 		m_countdownText.draw(renderer);
 	}

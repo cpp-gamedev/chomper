@@ -1,9 +1,8 @@
 #pragma once
 #include "chomper/world_space.hpp"
-#include "glm/ext/vector_float2.hpp"
-#include "le2d/drawable/sprite.hpp"
-#include "le2d/renderer.hpp"
-#include "le2d/resource/texture.hpp"
+#include <le2d/drawable/sprite.hpp>
+#include <le2d/renderer.hpp>
+#include <le2d/resource/texture.hpp>
 
 namespace chomper {
 class Collectible {
