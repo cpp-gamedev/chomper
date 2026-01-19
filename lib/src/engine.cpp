@@ -111,6 +111,9 @@ void Engine::createContext(CreateInfo const& createInfo) {
 		if (createInfo.noLibdecor) {
 			ret |= le::PlatformFlag::NoLibdecor;
 		}
+		if (createInfo.forceX11) {
+			ret |= le::PlatformFlag::ForceX11;
+		}
 		return ret;
 	}();
 	auto const windowTitle = std::format("chomper {}", buildVersionStr);
