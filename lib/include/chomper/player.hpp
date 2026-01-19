@@ -2,12 +2,12 @@
 #include "chomper/controller.hpp"
 #include "chomper/debug_inspector.hpp"
 #include "chomper/snake.hpp"
-#include "le2d/drawable/text.hpp"
-#include "le2d/render_instance.hpp"
 #include <imgui.h>
 #include <klib/log.hpp>
+#include <le2d/drawable/text.hpp>
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
+#include <le2d/render_instance.hpp>
 #include <le2d/renderer.hpp>
 
 namespace chomper {

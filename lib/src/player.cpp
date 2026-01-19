@@ -92,7 +92,7 @@ void Player::updateScoreText() {
 	};
 
 	m_scoreText.set_string(m_engine->getResources().getMainFont(), std::format("Score: {}", m_info.score), textParams_v);
-	m_scoreText.transform.position = worldSpace::gridToWorld({0, worldSize_v.y - 1}) + glm::vec2{m_scoreText.get_size().x / 2, 0};
+	m_scoreText.transform.position = worldSpace::gridToWorld({0.0f, worldSize_v.y - 1.0f}) + glm::vec2{0.5f * m_scoreText.get_size().x, 0.0f};
 }
 
 void Player::draw(le::IRenderer& renderer) const {

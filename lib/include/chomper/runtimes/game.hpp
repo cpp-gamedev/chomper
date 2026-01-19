@@ -4,7 +4,6 @@
 #include "chomper/player.hpp"
 #include "chomper/runtime.hpp"
 #include "chomper/world.hpp"
-#include "le2d/resource/texture.hpp"
 #include <klib/ptr.hpp>
 #include <le2d/drawable/text.hpp>
 #include <le2d/input/action.hpp>
