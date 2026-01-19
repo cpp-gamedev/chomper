@@ -130,8 +130,9 @@ void Game::spawnCollectibles() {
 		auto random = m_random.next_index(m_emptyTiles.size());
 		auto tile = m_emptyTiles[random];
 		// remove said tile from the vector
-		m_emptyTiles[random] = m_emptyTiles.back();
-		m_emptyTiles.pop_back();
+		std::erase_if(m_emptyTiles, [&](auto const& v) {
+			return v == m_emptyTiles[random];
+		});
 		// place the collectible on the tile
 		auto width = static_cast<int>(worldSize_v.x);
 		m_collectibles.emplace_back(*m_collectibleTexture, worldSpace::gridToWorld({tile % width, tile / width}));
@@ -142,11 +143,13 @@ void Game::collideCollectibles() {
 	auto it = std::ranges::find_if(m_collectibles, [&](auto const& collectible) {
 		return collectible.getGridPosition() == worldSpace::worldToGrid(m_player->getSegments().back().transform.position);
 	});
-	if (it != m_collectibles.end()) {
-		m_collectibles.erase(it);
-		m_player->grow();
-		spawnCollectibles();
+	if (it == m_collectibles.end()) {
+		return;
 	}
+
+	m_collectibles.erase(it);
+	m_player->grow();
+	spawnCollectibles();
 }
 
 void Game::onGoBack() {
