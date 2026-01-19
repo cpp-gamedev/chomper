@@ -14,7 +14,7 @@ class Collectibles {
 	void draw(le::IRenderer& renderer) const;
 
 	void eraseInstance(std::size_t index) {
-		if (index > m_sprites.instances.size()) {
+		if (index > +m_sprites.instances.size()) {
 			return;
 		}
 		m_sprites.instances.erase(m_sprites.instances.begin() + static_cast<std::vector<le::RenderInstance>::difference_type>(index));
