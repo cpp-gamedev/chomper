@@ -16,6 +16,7 @@ auto run(int const argc, char const* const* argv) -> int {
 		klib::args::named_option(engineCI.assetsDir, "a,assets", "override assets directory"),
 		klib::args::named_option(engineCI.prefsPath, "p,prefs", "path to custom prefs JSON"),
 		klib::args::named_flag(engineCI.noLibdecor, "no-libdecor", "disable libdecor (ignored unless Wayland)"),
+		klib::args::named_flag(engineCI.forceX11, "force-x11", "force X11"),
 	};
 	auto const parseResult = klib::args::parse_main(parseInfo, args, argc, argv);
 	if (parseResult.early_return()) {
