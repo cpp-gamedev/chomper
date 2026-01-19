@@ -19,6 +19,6 @@ constexpr auto worldToGrid(glm::vec2 worldPosition) {
 }
 
 constexpr auto isOutOfBounds(glm::vec2 gridPoint) {
-	return gridPoint.x <= 0 || gridPoint.y <= 0 || gridPoint.x > worldSize_v.x || gridPoint.y > worldSize_v.y;
+	return gridPoint.x < 0 || gridPoint.y < 0 || gridPoint.x >= worldSize_v.x || gridPoint.y >= worldSize_v.y;
 }
 } // namespace chomper::worldSpace
