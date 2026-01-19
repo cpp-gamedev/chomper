@@ -18,6 +18,7 @@ class Engine : public IDebugInspector, public klib::Pinned {
 		std::string_view assetsDir{};
 		std::string_view prefsPath{};
 		bool noLibdecor{};
+		bool forceX11{};
 	};
 
 	using CreateRuntime = std::move_only_function<std::unique_ptr<IRuntime>(Engine&)>;
