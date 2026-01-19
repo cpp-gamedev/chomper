@@ -34,7 +34,8 @@ class Game : public IRuntime, public klib::Pinned {
 	void createPlayer();
 	void createCollectibleTexture();
 
-	void spawnCollectible();
+	void findEmptyTiles();
+	void spawnCollectibles();
 	void collideCollectibles();
 
 	void onGoBack();
@@ -54,7 +55,7 @@ class Game : public IRuntime, public klib::Pinned {
 	std::vector<Collectible> m_collectibles{};
 	klib::Ptr<le::ITexture const> m_collectibleTexture{};
 
-	size_t m_collectibleAmount = 10;
+	std::vector<int> m_emptyTiles{};
 
 	le::drawable::Text m_countdownText{};
 	kvf::Seconds m_countdown{3};

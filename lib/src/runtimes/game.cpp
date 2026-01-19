@@ -12,7 +12,8 @@ namespace {
 constexpr auto countdownParams_v = le::drawable::Text::Params{
 	.height = le::TextHeight{60},
 };
-}
+constexpr auto collectibleAmount_v = 10;
+} // namespace
 using ActionValue = le::input::action::Value;
 
 Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine->getInputRouter()) {
@@ -21,9 +22,7 @@ Game::Game(gsl::not_null<Engine*> engine) : m_engine(engine), m_mapping(&engine-
 
 	createCollectibleTexture();
 
-	for (size_t i = 0; i < m_collectibleAmount; ++i) {
-		spawnCollectible();
-	}
+	spawnCollectibles();
 
 	m_countdownText.set_string(engine->getResources().getMainFont(), "3", countdownParams_v);
 }
@@ -94,35 +93,48 @@ void Game::createCollectibleTexture() {
 	m_collectibleTexture = m_engine->getResources().load<le::ITexture>("images/apple.png");
 }
 
-void Game::spawnCollectible() {
-	m_occupied.clear();
+void Game::findEmptyTiles() {
+	m_emptyTiles.clear();
+	m_emptyTiles.reserve(static_cast<int>(worldSize_v.x * worldSize_v.y));
+	for (auto i = 0; i < static_cast<int>(worldSize_v.x * worldSize_v.y); i++) {
+		m_emptyTiles.push_back(i);
+	}
+
+	auto const removeTile = [this](int tile) {
+		auto it = std::ranges::find(m_emptyTiles, tile);
+		if (it != m_emptyTiles.end()) {
+			*it = m_emptyTiles.back();
+			m_emptyTiles.pop_back();
+		}
+	};
+
 	for (auto const& seg : m_player->getSegments()) {
 		auto p = worldSpace::worldToGrid(seg.transform.position);
-		m_occupied.insert(static_cast<int>((p.y * worldSize_v.x) + p.x));
+		removeTile(static_cast<int>((p.y * worldSize_v.x) + p.x));
 	}
 
 	for (auto const& c : m_collectibles) {
 		auto p = c.getGridPosition();
-		m_occupied.insert(static_cast<int>((p.y * worldSize_v.x) + p.x));
+		removeTile(static_cast<int>((p.y * worldSize_v.x) + p.x));
 	}
+}
 
-	auto emptyTiles = (worldSize_v.x * worldSize_v.y) - static_cast<float>(m_occupied.size());
-	if (emptyTiles <= 0) {
-		return;
-	}
+void Game::spawnCollectibles() {
+	findEmptyTiles();
 
-	auto random = m_random.next_int(0, static_cast<int>(emptyTiles - 1));
-
-	auto count = 0;
-	auto const width = static_cast<int>(worldSize_v.x);
-	for (int index = 0; index < static_cast<int>(worldSize_v.x * worldSize_v.y); index++) {
-		if (m_occupied.contains(index)) {
-			continue;
-		}
-		if (count++ == random) {
-			m_collectibles.emplace_back(*m_collectibleTexture, worldSpace::gridToWorld({index % width, index / width}));
+	for (auto i = m_collectibles.size(); i < collectibleAmount_v; i++) {
+		if (m_emptyTiles.empty()) {
 			return;
 		}
+		// find a random tile
+		auto random = m_random.next_index(m_emptyTiles.size());
+		auto tile = m_emptyTiles[random];
+		// remove said tile from the vector
+		m_emptyTiles[random] = m_emptyTiles.back();
+		m_emptyTiles.pop_back();
+		// place the collectible on the tile
+		auto width = static_cast<int>(worldSize_v.x);
+		m_collectibles.emplace_back(*m_collectibleTexture, worldSpace::gridToWorld({tile % width, tile / width}));
 	}
 }
 
@@ -133,7 +145,7 @@ void Game::collideCollectibles() {
 	if (it != m_collectibles.end()) {
 		m_collectibles.erase(it);
 		m_player->grow();
-		spawnCollectible();
+		spawnCollectibles();
 	}
 }
 

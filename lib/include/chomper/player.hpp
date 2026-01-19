@@ -17,7 +17,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
   public:
 	struct Info {
 		bool alive = true;
-		std::size_t score{};
+		int score{};
 	};
 
 	explicit Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine);
