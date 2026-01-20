@@ -3,11 +3,15 @@
 #include "chomper/engine.hpp"
 #include "chomper/player.hpp"
 #include "chomper/runtime.hpp"
+#include "chomper/ui/countdown.hpp"
 #include "chomper/world.hpp"
 #include <klib/ptr.hpp>
 #include <le2d/drawable/text.hpp>
 #include <le2d/input/action.hpp>
 #include <le2d/input/scoped_mapping.hpp>
+#include <le2d/random.hpp>
+#include <le2d/resource/texture.hpp>
+#include <optional>
 
 namespace chomper::runtime {
 // driven by Engine, owner (whether indirectly) of all game things.
@@ -49,7 +53,6 @@ class Game : public IRuntime, public klib::Pinned {
 
 	std::vector<int> m_emptyTiles{};
 
-	le::drawable::Text m_countdownText{};
-	kvf::Seconds m_countdown{3};
+	std::optional<ui::Countdown> m_countdown{};
 };
 } // namespace chomper::runtime
