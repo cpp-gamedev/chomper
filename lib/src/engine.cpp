@@ -2,6 +2,7 @@
 #include "chomper/build_version.hpp"
 #include "chomper/inclusive_range.hpp"
 #include "chomper/runtimes/entrypoint.hpp"
+#include "chomper/theme.hpp"
 #include "chomper/viewport.hpp"
 #include <imgui.h>
 #include <klib/assert.hpp>
@@ -12,8 +13,6 @@
 
 namespace chomper {
 namespace {
-constexpr auto clearColor_v = kvf::Color{glm::vec4{.34f, .54f, .2f, 1.f}};
-
 std::unique_ptr<IRuntime> createEntrypoint(Engine& engine) {
 	return std::make_unique<runtime::Entrypoint>(&engine);
 }
@@ -52,7 +51,7 @@ void Engine::run() {
 		m_runtime->tick(scaledDt);
 
 		// render runtime.
-		auto& renderer = m_context->begin_render(clearColor_v);
+		auto& renderer = m_context->begin_render(theme::clearColor_v);
 		renderer.viewport = viewport_v;
 		renderer.polygon_mode = m_runtimeState.wireframe ? vk::PolygonMode::eLine : vk::PolygonMode::eFill;
 
