@@ -1,5 +1,5 @@
 #pragma once
-#include "chomper/collectible.hpp"
+#include "chomper/collectibles.hpp"
 #include "chomper/engine.hpp"
 #include "chomper/player.hpp"
 #include "chomper/runtime.hpp"
@@ -12,7 +12,6 @@
 #include <le2d/random.hpp>
 #include <le2d/resource/texture.hpp>
 #include <optional>
-#include <unordered_set>
 
 namespace chomper::runtime {
 // driven by Engine, owner (whether indirectly) of all game things.
@@ -34,10 +33,8 @@ class Game : public IRuntime, public klib::Pinned {
 
 	void bindActions();
 	void createPlayer();
-	void createCollectibleTexture();
+	void createCollectibles();
 
-	void findEmptyTiles();
-	void spawnCollectibles();
 	void collideCollectibles();
 
 	void onGoBack();
@@ -49,12 +46,9 @@ class Game : public IRuntime, public klib::Pinned {
 	le::input::ScopedActionMapping m_mapping;
 	Actions m_actions{};
 
-	le::Random m_random{};
-	std::unordered_set<int> m_occupied;
-
 	std::unique_ptr<Player> m_player{};
 	std::unique_ptr<World> m_world{};
-	std::vector<Collectible> m_collectibles{};
+	std::unique_ptr<Collectibles> m_collectibles{};
 	klib::Ptr<le::ITexture const> m_collectibleTexture{};
 
 	std::vector<int> m_emptyTiles{};
