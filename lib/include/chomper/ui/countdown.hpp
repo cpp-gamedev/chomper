@@ -22,7 +22,7 @@ class Countdown {
 	void updateSector();
 
 	gsl::not_null<le::IFont*> m_font;
-	le::TextHeight m_textHeight{120};
+	le::TextHeight m_textHeight{};
 
 	le::drawable::Sector m_sector{};
 	le::drawable::Circle m_background{};

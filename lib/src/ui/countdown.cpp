@@ -46,7 +46,7 @@ void Countdown::setTimerText(std::chrono::seconds const value) {
 	// technically this isn't correct y-centering because parts of glyphs can be above/below the baseline,
 	// and Text::get_size() is insufficient to adjust for that.
 	// here, since each displayed glyph (0-9) is entirely above the baseline (unlike say 'g'),
-	// it can be pushed down by half the size and it will "look" y-centered.
+	// it can be pushed down by half the size and it will "look" consistently y-centered.
 	// this is what is known as a "hack".
 	m_text.transform.position.y = -0.5f * m_text.get_size().y;
 }
@@ -54,11 +54,11 @@ void Countdown::setTimerText(std::chrono::seconds const value) {
 void Countdown::updateSector() {
 	KLIB_ASSERT(m_timer > 0s);
 	auto const ratio = m_remain / m_timer;
-	static constexpr auto degreesBegin{90.0f};
-	auto const degreesEnd = degreesBegin + (ratio * 360.0f);
+	static constexpr auto degreesBegin_v{90.0f};
+	auto const degreesEnd = degreesBegin_v + (ratio * 360.0f);
 	auto const diameter = m_background.get_diameter() + 30.0f;
 	auto const sectorParams = le::shape::Sector::Params{
-		.degrees_begin = degreesBegin,
+		.degrees_begin = degreesBegin_v,
 		.degrees_end = degreesEnd,
 	};
 	m_sector.create(diameter, sectorParams);
