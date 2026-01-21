@@ -6,6 +6,9 @@ void Animator::play(std::unique_ptr<IAnimation> animation) {
 }
 
 void Animator::tick(kvf::Seconds dt) {
+	std::erase_if(m_playing, [&](auto const& animation) {
+		return animation->finished();
+	});
 	for (auto const& animation : m_playing) {
 		animation->tick(dt);
 	}

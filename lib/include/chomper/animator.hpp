@@ -9,6 +9,13 @@ class IAnimation : public klib::Polymorphic {
   public:
 	virtual void tick(kvf::Seconds dt) = 0;
 	virtual void draw(le::IRenderer& renderer) const = 0;
+
+	[[nodiscard]] bool finished() const {
+		return m_finished;
+	}
+
+  protected:
+	bool m_finished{};
 };
 
 class Animator {

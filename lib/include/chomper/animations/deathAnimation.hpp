@@ -13,10 +13,10 @@ class DeathAnimation : public chomper::IAnimation {
 		float lifetime{};
 		float rotSpeed{};
 		glm::vec2 velocity{};
-		le::drawable::Quad quad{};
 	};
 
 	std::vector<Segment> m_segments{};
+	le::drawable::InstancedQuad m_quads{};
 
 	le::Random m_random{};
 };

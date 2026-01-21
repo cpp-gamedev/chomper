@@ -12,6 +12,9 @@ constexpr auto easeOut(float t) {
 DeathAnimation::DeathAnimation(std::span<le::RenderInstance const> instances) {
 	m_segments.clear();
 	m_segments.reserve(instances.size());
+	m_quads.instances.clear();
+	m_quads.instances.reserve(instances.size());
+	m_quads.create(tileSize_v);
 
 	for (auto const& instance : instances) {
 		auto dir = m_random.next_float(0, 360);
@@ -26,14 +29,21 @@ DeathAnimation::DeathAnimation(std::span<le::RenderInstance const> instances) {
 		seg.velocity = {std::cos(rad) * speed, std::sin(rad) * speed};
 		seg.remaining = lifetime;
 		seg.lifetime = lifetime;
-		seg.quad.create(tileSize_v);
-		seg.quad.tint = instance.tint;
-		seg.quad.transform = instance.transform;
+
+		m_quads.instances.emplace_back().tint = instance.tint;
+		m_quads.instances.back().transform = instance.transform;
+
 		m_segments.push_back(seg);
 	}
 }
+
 void DeathAnimation::tick(kvf::Seconds dt) {
-	for (auto& seg : m_segments) {
+	assert(m_segments.size() == m_quads.instances.size());
+
+	auto animating = false;
+
+	for (std::size_t i = 0; i < m_segments.size(); i++) {
+		auto& seg = m_segments[i];
 		if (seg.remaining <= 0.f) {
 			continue;
 		}
@@ -44,32 +54,31 @@ void DeathAnimation::tick(kvf::Seconds dt) {
 
 		auto eased = 1.f - easeOut(t);
 
-		seg.quad.transform.position += seg.velocity * eased * dt.count();
-		if (worldSpace::isOutOfBounds(worldSpace::worldToGrid(seg.quad.transform.position))) {
+		auto& quad = m_quads.instances.at(i);
+		quad.transform.position += seg.velocity * eased * dt.count();
+		if (worldSpace::isOutOfBounds(worldSpace::worldToGrid(quad.transform.position))) {
 			seg.velocity = -seg.velocity;
 		}
 
-		float angle = dt.count() * eased * seg.rotSpeed;
-		auto o = seg.quad.transform.orientation;
-		auto cos = std::cos(angle);
-		auto sin = std::sin(angle);
-		seg.quad.transform.orientation = {(o.x * cos) - (o.y * sin), (o.x * sin) + (o.y * cos)};
+		auto angle = dt.count() * eased * seg.rotSpeed;
+		quad.transform.orientation.rotate(angle);
 
-		float scale = 1.f;
 		if (t > 0.8f) {
-			float u = (t - 0.8f) / 0.2f; // 0 → 1
-			scale = 1.f - u;			 // 1 → 0
+			auto scale = 1.f;
+			auto u = (t - 0.8f) / 0.2f; // 0 → 1
+			scale = 1.f - u;			// 1 → 0
+			quad.transform.scale = {scale, scale};
 		}
-		seg.quad.transform.scale = {scale, scale};
+
+		if (t < 1.f) {
+			animating = true;
+		}
 	}
+	m_finished = !animating;
 }
 
 void DeathAnimation::draw(le::IRenderer& renderer) const {
-	for (auto const& segment : m_segments) {
-		if (segment.remaining > 0.f) {
-			segment.quad.draw(renderer);
-		}
-	}
+	m_quads.draw(renderer);
 }
 
 } // namespace chomper::animation
