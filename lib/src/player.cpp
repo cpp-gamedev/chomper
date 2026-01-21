@@ -1,4 +1,5 @@
 #include "chomper/player.hpp"
+#include "chomper/animations/deathAnimation.hpp"
 #include "chomper/controllers/player_controller.hpp"
 #include "chomper/engine.hpp"
 #include "chomper/world_size.hpp"
@@ -18,12 +19,13 @@ Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine con
 }
 
 void Player::tick(kvf::Seconds dt) {
+	m_animator.tick(dt);
+
 	if (!m_info.alive) {
 		return;
 	}
 
 	m_controller->tick(dt);
-
 	m_moveTimer += dt;
 
 	if (m_moveTimer >= moveSpeed_v) {
@@ -69,6 +71,7 @@ void Player::move() {
 	if (isCollidingWithSelf(targetGrid) || isCollidingWithWall(targetGrid)) {
 		if (m_graceMove) {
 			m_info.alive = false;
+			m_animator.play(std::make_unique<animation::DeathAnimation>(m_snake.getSegments()));
 		} else {
 			m_graceMove = true;
 		}
@@ -96,7 +99,10 @@ void Player::updateScoreText() {
 }
 
 void Player::draw(le::IRenderer& renderer) const {
-	m_snake.draw(renderer);
+	if (m_info.alive) {
+		m_snake.draw(renderer);
+	}
+	m_animator.draw(renderer);
 	m_scoreText.draw(renderer);
 }
 

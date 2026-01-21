@@ -1,4 +1,5 @@
 #pragma once
+#include "chomper/animator.hpp"
 #include "chomper/controller.hpp"
 #include "chomper/debug_inspector.hpp"
 #include "chomper/snake.hpp"
@@ -66,5 +67,7 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	// bool to decide wether to remove the tail, turn false if the snake has eaten
 	bool m_shouldPop = true;
 	bool m_graceMove{};
+
+	Animator m_animator{};
 };
 } // namespace chomper

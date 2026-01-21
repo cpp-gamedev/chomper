@@ -40,7 +40,15 @@ void Game::tick(kvf::Seconds const dt) {
 
 	// On death
 	if (!m_player->getInfo().alive) {
-		m_engine->setNextRuntime<runtime::Entrypoint>();
+		auto const visitor = klib::SubVisitor{[this](le::event::Key const& key) {
+			if (key.action != GLFW_PRESS) {
+				return;
+			}
+			m_engine->setNextRuntime<Entrypoint>();
+		}};
+		for (auto const& event : m_engine->getContext().event_queue()) {
+			std::visit(visitor, event);
+		}
 	}
 }
 
