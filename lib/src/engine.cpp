@@ -137,8 +137,7 @@ void Engine::createContext(CreateInfo const& createInfo) {
 }
 
 void Engine::createResources() {
-	auto assetLoader = m_context->create_asset_loader(m_dataLoader.get());
-	m_resources = std::make_unique<Resources>(std::move(assetLoader));
+	m_resources = std::make_unique<Resources>(createAssetLoader());
 }
 
 void Engine::inspectStats() {

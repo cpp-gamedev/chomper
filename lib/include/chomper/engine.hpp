@@ -52,6 +52,10 @@ class Engine : public IDebugInspector, public klib::Pinned {
 		return m_debugStats;
 	}
 
+	[[nodiscard]] le::AssetLoader createAssetLoader() const {
+		return m_context->create_asset_loader(&getDataLoader());
+	}
+
 	void run();
 
 	void setVsync(le::Vsync vsync);
