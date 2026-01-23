@@ -42,7 +42,7 @@ class Resources : public IDebugInspector {
 			return {};
 		}
 		auto* ret = asset.get();
-		m_assets.insert_or_assign(std::string{uri}, std::move(asset)).first;
+		m_assets.insert_or_assign(std::string{uri}, std::move(asset));
 		return ret;
 	}
 

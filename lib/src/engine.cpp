@@ -91,6 +91,7 @@ void Engine::debugInspect() {
 	ImGui::Separator();
 	if (ImGui::Button("restart")) {
 		m_log.info("restarting");
+		m_context->wait_idle();
 		setNextRuntime(&createEntrypoint);
 	}
 }
