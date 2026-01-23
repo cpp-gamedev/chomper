@@ -1,38 +1,42 @@
 #include "chomper/runtimes/entrypoint.hpp"
-#include "chomper/runtimes/game.hpp"
+#include "chomper/runtimes/main_menu.hpp"
+#include <klib/log.hpp>
 #include <klib/visitor.hpp>
 
 namespace chomper::runtime {
-Entrypoint::Entrypoint(gsl::not_null<Engine*> engine) : m_engine(engine) {
-	static constexpr auto textParams_v = le::drawable::Text::Params{
-		.height = le::TextHeight{60},
-	};
-	m_mainText.set_string(engine->getResources().getMainFont(), "START", textParams_v);
+namespace {
+auto const assetManifest = AssetManifest{
+	.textures =
+		{
+			"images/apple.png",
+		},
+};
+} // namespace
+
+Entrypoint::Entrypoint(gsl::not_null<Engine*> engine) : m_engine(engine), m_manifestLoader(engine->createAssetLoader()) {
+	setupMainText();
+	m_manifestLoader.startLoad(assetManifest);
 }
 
-void Entrypoint::tick(kvf::Seconds const dt) {
-	swingMainText(dt);
+void Entrypoint::tick(kvf::Seconds const /*dt*/) {
+	auto const loadProgress = m_manifestLoader.update();
 
-	auto const visitor = klib::SubVisitor{[this](le::event::Key const& key) {
-		if (key.action != GLFW_PRESS) {
-			return;
-		}
-		m_engine->setNextRuntime<Game>();
-	}};
-	for (auto const& event : m_engine->getContext().event_queue()) {
-		std::visit(visitor, event);
+	if (loadProgress.isLoading()) {
+		return;
 	}
+
+	m_manifestLoader.transferTo(m_engine->getResources());
+	m_engine->setNextRuntime<MainMenu>();
 }
 
 void Entrypoint::render(le::IRenderer& renderer) const {
 	m_mainText.draw(renderer);
 }
 
-void Entrypoint::swingMainText(kvf::Seconds const dt) {
-	static constexpr auto speed_v = 5.0f;
-	static constexpr auto amplitude_v = 20.0f;
-	m_elapsed += dt;
-	auto const offset = glm::sin(speed_v * m_elapsed.count()) * amplitude_v;
-	m_mainText.transform.position.x = offset;
+void Entrypoint::setupMainText() {
+	static constexpr auto textParams_v = le::drawable::Text::Params{
+		.height = le::TextHeight{60},
+	};
+	m_mainText.set_string(m_engine->getResources().getMainFont(), "LOADING...", textParams_v);
 }
 } // namespace chomper::runtime
