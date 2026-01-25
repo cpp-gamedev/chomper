@@ -18,7 +18,7 @@ class ManifestLoader {
 	void startLoad(AssetManifest const& manifest);
 
 	Progress update();
-	Progress getProgress() const;
+	[[nodiscard]] Progress getProgress() const;
 
 	void transferTo(Resources& out);
 
