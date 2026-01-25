@@ -1,4 +1,5 @@
 #include "chomper/snake.hpp"
+#include "chomper/theme.hpp"
 #include "chomper/world_size.hpp"
 #include "chomper/world_space.hpp"
 #include <imgui.h>
@@ -7,13 +8,12 @@
 
 namespace chomper {
 namespace {
-constexpr auto snakeBodyColor_v = kvf::Color(glm::vec4{0.f, 0.6f, 1.f, 1.f});
 constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::vec2>{glm::vec2{1.f, 0.f}, glm::vec2{0.f, 1.f}, glm::vec2{-1.f, 0.f}, glm::vec2{0.f, -1.f}};
 } // namespace
 
 Snake::Snake() {
 	le::RenderInstance instance{};
-	instance.tint = snakeBodyColor_v;
+	instance.tint = theme::snakeBodyColor_v;
 	instance.transform.position = worldSpace::gridToWorld({0, 0.5f * worldSize_v.y});
 	m_instances.push_back(instance);
 	while (m_instances.size() < m_baseSize) {
@@ -27,7 +27,7 @@ void Snake::draw(le::IRenderer& renderer) const {
 
 void Snake::grow(Heading heading) {
 	le::RenderInstance instance{};
-	instance.tint = snakeBodyColor_v;
+	instance.tint = theme::snakeBodyColor_v;
 	// no reason to move on initialization
 	if (!m_instances.empty()) {
 		instance.transform.position = worldSpace::gridToWorld(worldSpace::worldToGrid(m_instances.back().transform.position) + headingToDir_v[heading]);

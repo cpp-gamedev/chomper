@@ -4,7 +4,14 @@
 #include <klib/fixed_string.hpp>
 
 namespace chomper {
-Resources::Resources(le::AssetLoader assetLoader) : m_assetLoader(std::move(assetLoader)), m_mainFont(&loadRequired<le::IFont>("fonts/main.ttf")) {}
+Resources::Resources(le::AssetLoader assetLoader) : m_assetLoader(std::move(assetLoader)), m_mainFont(&reloadRequired<le::IFont>("fonts/main.ttf")) {}
+
+void Resources::store(std::string uri, std::unique_ptr<le::IAsset> asset) {
+	if (uri.empty() || !asset) {
+		return;
+	}
+	m_assets.insert_or_assign(std::move(uri), std::move(asset));
+}
 
 bool Resources::unload(std::string_view const uri) {
 	auto const it = m_assets.find(uri);
