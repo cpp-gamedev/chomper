@@ -8,7 +8,7 @@
 
 namespace chomper {
 namespace {
-constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::vec2>{glm::vec2{1.f, 0.f}, glm::vec2{0.f, 1.f}, glm::vec2{-1.f, 0.f}, glm::vec2{0.f, -1.f}};
+constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::ivec2>{glm::ivec2{1, 0}, glm::ivec2{0, 1}, glm::ivec2{-1, 0}, glm::ivec2{0, -1}};
 } // namespace
 
 Snake::Snake() {

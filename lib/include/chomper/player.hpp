@@ -36,8 +36,8 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	}
 
   private:
-	[[nodiscard]] bool isCollidingWithSelf(glm::vec2 targetGrid) const;
-	[[nodiscard]] bool isCollidingWithWall(glm::vec2 targetGrid) const;
+	[[nodiscard]] bool isCollidingWithSelf(glm::ivec2 targetGrid) const;
+	[[nodiscard]] bool isCollidingWithWall(glm::ivec2 targetGrid) const;
 	void move();
 	void updateScoreText();
 

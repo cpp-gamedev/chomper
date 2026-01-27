@@ -25,7 +25,7 @@ void World::createGrid() {
 
 	m_gridQuad.texture = m_gridTexture.get();
 	auto const rect = kvf::Rect<>::from_size(viewport_v.world_size);
-	m_gridQuad.create(rect, kvf::UvRect{.rb = worldSize_v * 0.5f}); // * 0.5f, since each texture is 2x2 tiles
+	m_gridQuad.create(rect, kvf::UvRect{.rb = worldSize_v / 2}); // / 2, since each texture is 2x2 tiles
 }
 
 } // namespace chomper
