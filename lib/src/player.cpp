@@ -10,7 +10,7 @@ namespace chomper {
 namespace {
 constexpr auto moveSpeed_v = kvf::Seconds{0.135f};
 constexpr auto oppositeHeading_v = klib::EnumArray<Heading, Heading>{Heading::West, Heading::South, Heading::East, Heading::North};
-constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::vec2>{glm::vec2{1.f, 0.f}, glm::vec2{0.f, 1.f}, glm::vec2{-1.f, 0.f}, glm::vec2{0.f, -1.f}};
+constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::ivec2>{glm::ivec2{1, 0}, glm::ivec2{0, 1}, glm::ivec2{-1, 0}, glm::ivec2{0, -1}};
 } // namespace
 
 Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine) : m_engine(engine) {
@@ -40,7 +40,7 @@ void Player::grow() {
 	m_shouldPop = false;
 }
 
-bool Player::isCollidingWithSelf(glm::vec2 const targetGrid) const {
+bool Player::isCollidingWithSelf(glm::ivec2 const targetGrid) const {
 	if (m_snake.getSegments().empty()) {
 		return false;
 	}
@@ -49,7 +49,7 @@ bool Player::isCollidingWithSelf(glm::vec2 const targetGrid) const {
 	});
 }
 
-bool Player::isCollidingWithWall(glm::vec2 const targetGrid) const {
+bool Player::isCollidingWithWall(glm::ivec2 const targetGrid) const {
 	if (m_snake.getSegments().empty()) {
 		return false;
 	}
@@ -95,7 +95,7 @@ void Player::updateScoreText() {
 	};
 
 	m_scoreText.set_string(m_engine->getResources().getMainFont(), std::format("Score: {}", m_info.score), textParams_v);
-	m_scoreText.transform.position = worldSpace::gridToWorld({0.0f, worldSize_v.y - 1.0f}) + glm::vec2{0.5f * m_scoreText.get_size().x, 0.0f};
+	m_scoreText.transform.position = worldSpace::gridToWorld({0, worldSize_v.y - 1}) + glm::vec2{0.5f * m_scoreText.get_size().x, 0.0f};
 }
 
 void Player::draw(le::IRenderer& renderer) const {

@@ -28,7 +28,7 @@ void Collectibles::spawn(Player const& player) {
 			return v == m_emptyTiles[random];
 		});
 		// place the collectible on the tile
-		auto width = static_cast<int>(worldSize_v.x);
+		auto width = worldSize_v.x;
 		m_sprites.instances.emplace_back();
 		m_sprites.instances.back().transform.position = worldSpace::gridToWorld({tile % width, tile / width});
 	}
@@ -36,8 +36,8 @@ void Collectibles::spawn(Player const& player) {
 
 void Collectibles::findEmptyTiles(Player const& player) {
 	m_emptyTiles.clear();
-	m_emptyTiles.reserve(static_cast<int>(worldSize_v.x * worldSize_v.y));
-	for (auto i = 0; i < static_cast<int>(worldSize_v.x * worldSize_v.y); i++) {
+	m_emptyTiles.reserve(worldSize_v.x * worldSize_v.y);
+	for (auto i = 0; i < worldSize_v.x * worldSize_v.y; i++) {
 		m_emptyTiles.push_back(i);
 	}
 
@@ -51,12 +51,12 @@ void Collectibles::findEmptyTiles(Player const& player) {
 
 	for (auto const& seg : player.getSegments()) {
 		auto p = worldSpace::worldToGrid(seg.transform.position);
-		removeTile(static_cast<int>((p.y * worldSize_v.x) + p.x));
+		removeTile((p.y * worldSize_v.x) + p.x);
 	}
 
 	for (auto const& c : m_sprites.instances) {
 		auto p = worldSpace::worldToGrid(c.transform.position);
-		removeTile(static_cast<int>((p.y * worldSize_v.x) + p.x));
+		removeTile((p.y * worldSize_v.x) + p.x);
 	}
 }
 
