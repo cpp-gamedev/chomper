@@ -16,10 +16,10 @@ constexpr auto tileOffset = glm::ivec2{toTileOffset(worldSize_v.x, tileSize_v.x)
 } // namespace
 
 constexpr auto gridToWorld(glm::ivec2 gridPosition) {
-	return ((gridPosition - halfGridSize) * tileSize_v) + tileOffset;
+	return glm::vec2(((gridPosition - halfGridSize) * tileSize_v) + tileOffset);
 }
 constexpr auto worldToGrid(glm::ivec2 worldPosition) {
-	return ((worldPosition - tileOffset) / tileSize_v) + halfGridSize;
+	return glm::ivec2((worldPosition - tileOffset) / tileSize_v) + halfGridSize;
 }
 
 constexpr auto isOutOfBounds(glm::ivec2 gridPoint) {
