@@ -1,4 +1,4 @@
-#include "chomper/animations/deathAnimation.hpp"
+#include "chomper/animations/death_animation.hpp"
 #include "chomper/world_space.hpp"
 #include <numbers>
 

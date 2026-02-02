@@ -1,4 +1,5 @@
 #pragma once
+#include "chomper/animations/head_animation.hpp"
 #include "chomper/animator.hpp"
 #include "chomper/controller.hpp"
 #include "chomper/debug_inspector.hpp"
@@ -14,14 +15,18 @@
 namespace chomper {
 class Engine;
 
-class Player : public IController::IListener, public IDebugInspector, public klib::Pinned {
+namespace runtime {
+class Game;
+}
+
+class Player : public IController::IListener, public IDebugInspector, public klib::Pinned, public animation::DirectionProvider {
   public:
 	struct Info {
 		bool alive = true;
 		int score{};
 	};
 
-	explicit Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine);
+	explicit Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine, gsl::not_null<runtime::Game const*> game);
 
 	void tick(kvf::Seconds dt);
 	void draw(le::IRenderer& renderer) const;
@@ -33,6 +38,15 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 	}
 	[[nodiscard]] std::span<le::RenderInstance const> getSegments() const {
 		return m_snake.getSegments();
+	}
+
+	[[nodiscard]] glm::vec2 getHeadPosition() const final {
+		KLIB_ASSERT(!m_snake.getSegments().empty());
+		return m_snake.getSegments().back().transform.position;
+	}
+
+	[[nodiscard]] Heading getHeading() const final {
+		return m_heading;
 	}
 
   private:
