@@ -15,10 +15,6 @@
 namespace chomper {
 class Engine;
 
-namespace runtime {
-class Game;
-}
-
 class Player : public IController::IListener, public IDebugInspector, public klib::Pinned, public animation::DirectionProvider {
   public:
 	struct Info {
@@ -26,7 +22,8 @@ class Player : public IController::IListener, public IDebugInspector, public kli
 		int score{};
 	};
 
-	explicit Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine, gsl::not_null<runtime::Game const*> game);
+	explicit Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine,
+					gsl::not_null<animation::CollectibleProvider const*> collectibleProvider);
 
 	void tick(kvf::Seconds dt);
 	void draw(le::IRenderer& renderer) const;

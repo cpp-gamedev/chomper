@@ -5,11 +5,9 @@
 
 namespace chomper::animation {
 namespace {
-constexpr klib::EnumArray<Heading, float> headingToRot_v{glm::radians(90.f), glm::radians(0.f), glm::radians(270.f), glm::radians(180.f)};
-
 constexpr auto isAdjacent(glm::ivec2 const& grid1, glm::ivec2 const& grid2) {
-	auto dx = std::abs(grid1.x - grid2.x);
-	auto dy = std::abs(grid1.y - grid2.y);
+	auto dx = klib::abs(grid1.x - grid2.x);
+	auto dy = klib::abs(grid1.y - grid2.y);
 
 	return (dx <= 1 && dy <= 1) && (dx != 0 || dy != 0);
 }
@@ -26,13 +24,16 @@ std::optional<glm::vec2> findAdjacentCollectible(std::span<le::RenderInstance co
 
 } // namespace
 
-HeadAnimation::HeadAnimation(klib::Ptr<DirectionProvider const> directionProvider, klib::Ptr<CollectibleProvider const> collectibleProvider,
+HeadAnimation::HeadAnimation(gsl::not_null<DirectionProvider const*> directionProvider, gsl::not_null<CollectibleProvider const*> collectibleProvider,
 							 gsl::not_null<Engine const*> engine)
 	: m_directionProvider(directionProvider), m_collectibleProvider(collectibleProvider) {
 	m_mouth.set_base_size(tileSize_v);
 	m_mouth.set_texture(engine->getResources().load<le::ITexture>("images/snake_mouth.png"));
 
 	m_eyeLidTexture = engine->getResources().load<le::ITexture>("images/eye_lid.png");
+	if (!m_eyeLidTexture) {
+		return;
+	}
 	m_leftEye = std::make_unique<Eye>(*m_eyeLidTexture);
 	m_rightEye = std::make_unique<Eye>(*m_eyeLidTexture);
 }
@@ -62,8 +63,8 @@ void HeadAnimation::tick(kvf::Seconds /*dt*/) {
 	m_mouth.transform.position = headPos + mouthOffset;
 	m_mouth.transform.orientation = le::nvec2::from_radians(headingToRot_v[heading]);
 
-	m_leftEye->movePupil(*target);
-	m_rightEye->movePupil(*target);
+	m_leftEye->lookAt(*target);
+	m_rightEye->lookAt(*target);
 }
 
 void HeadAnimation::draw(le::IRenderer& renderer) const {
@@ -91,7 +92,7 @@ void Eye::setPosition(glm::vec2 position) {
 	m_pupil.transform.position = position;
 }
 
-void Eye::movePupil(glm::vec2 target) {
+void Eye::lookAt(glm::vec2 target) {
 	auto dir = glm::normalize(target - m_eye.transform.position);
 	m_pupil.transform.position = m_eye.transform.position + dir * m_eye.get_diameter() * 0.25f;
 }

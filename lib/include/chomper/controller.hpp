@@ -1,22 +1,11 @@
 #pragma once
+#include "chomper/heading.hpp"
 #include <klib/base_types.hpp>
 #include <klib/enum_array.hpp>
 #include <kvf/time.hpp>
-#include <cstdint>
 #include <gsl/pointers>
-#include <string_view>
 
 namespace chomper {
-// represents a direction.
-enum class Heading : std::int8_t {
-	East,
-	North,
-	West,
-	South,
-	COUNT_
-};
-constexpr auto headingName_v = klib::EnumArray<Heading, std::string_view>{"East", "North", "West", "South"};
-
 // Heading controller interface.
 class IController : public klib::Polymorphic {
   public:

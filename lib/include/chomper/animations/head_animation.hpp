@@ -1,6 +1,6 @@
 #pragma once
 #include "chomper/animator.hpp"
-#include "chomper/controller.hpp"
+#include "chomper/heading.hpp"
 #include "klib/base_types.hpp"
 #include "klib/log.hpp"
 #include "klib/ptr.hpp"
@@ -27,7 +27,7 @@ class Eye {
   public:
 	explicit Eye(le::ITexture& eyeLidTexture);
 	void setPosition(glm::vec2 position);
-	void movePupil(glm::vec2 target);
+	void lookAt(glm::vec2 target);
 	void draw(le::IRenderer& renderer, bool drawEyeLids) const;
 
   private:
@@ -38,7 +38,7 @@ class Eye {
 
 class HeadAnimation : public IAnimation {
   public:
-	explicit HeadAnimation(klib::Ptr<DirectionProvider const> directionProvider, klib::Ptr<CollectibleProvider const> collectibleProvider,
+	explicit HeadAnimation(gsl::not_null<DirectionProvider const*> directionProvider, gsl::not_null<CollectibleProvider const*> collectibleProvider,
 						   gsl::not_null<Engine const*> engine);
 	void tick(kvf::Seconds dt) final;
 	void draw(le::IRenderer& renderer) const final;
@@ -46,8 +46,8 @@ class HeadAnimation : public IAnimation {
   private:
 	klib::TypedLogger<HeadAnimation> m_log;
 
-	klib::Ptr<DirectionProvider const> m_directionProvider{};
-	klib::Ptr<CollectibleProvider const> m_collectibleProvider{};
+	gsl::not_null<DirectionProvider const*> m_directionProvider;
+	gsl::not_null<CollectibleProvider const*> m_collectibleProvider;
 
 	le::drawable::Sprite m_mouth{};
 	std::unique_ptr<Eye> m_leftEye{};
