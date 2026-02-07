@@ -1,5 +1,5 @@
 #include "chomper/player.hpp"
-#include "chomper/animations/deathAnimation.hpp"
+#include "chomper/animations/death_animation.hpp"
 #include "chomper/controllers/player_controller.hpp"
 #include "chomper/engine.hpp"
 #include "chomper/world_size.hpp"
@@ -9,13 +9,15 @@
 namespace chomper {
 namespace {
 constexpr auto moveSpeed_v = kvf::Seconds{0.135f};
-constexpr auto oppositeHeading_v = klib::EnumArray<Heading, Heading>{Heading::West, Heading::South, Heading::East, Heading::North};
-constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::ivec2>{glm::ivec2{1, 0}, glm::ivec2{0, 1}, glm::ivec2{-1, 0}, glm::ivec2{0, -1}};
 } // namespace
 
-Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine) : m_engine(engine) {
+Player::Player(le::input::ScopedActionMapping& mapping, gsl::not_null<Engine const*> engine,
+			   gsl::not_null<animation::CollectibleProvider const*> collectibleProvider)
+	: m_engine(engine) {
 	createController(mapping);
 	updateScoreText();
+
+	m_animator.play(std::make_unique<animation::HeadAnimation>(this, collectibleProvider, engine));
 }
 
 void Player::tick(kvf::Seconds dt) {
@@ -71,6 +73,7 @@ void Player::move() {
 	if (isCollidingWithSelf(targetGrid) || isCollidingWithWall(targetGrid)) {
 		if (m_graceMove) {
 			m_info.alive = false;
+			m_animator.stopAll();
 			m_animator.play(std::make_unique<animation::DeathAnimation>(m_snake.getSegments()));
 		} else {
 			m_graceMove = true;

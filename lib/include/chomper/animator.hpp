@@ -23,6 +23,7 @@ class Animator {
 	void play(std::unique_ptr<IAnimation> animation);
 
 	void tick(kvf::Seconds dt);
+	void stopAll();
 
 	void draw(le::IRenderer& renderer) const;
 

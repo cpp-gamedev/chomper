@@ -14,6 +14,10 @@ void Animator::tick(kvf::Seconds dt) {
 	}
 }
 
+void Animator::stopAll() {
+	m_playing.clear();
+}
+
 void Animator::draw(le::IRenderer& renderer) const {
 	for (auto const& animation : m_playing) {
 		animation->draw(renderer);

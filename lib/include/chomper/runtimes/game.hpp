@@ -1,4 +1,5 @@
 #pragma once
+#include "chomper/animations/head_animation.hpp"
 #include "chomper/collectibles.hpp"
 #include "chomper/engine.hpp"
 #include "chomper/player.hpp"
@@ -15,9 +16,13 @@
 
 namespace chomper::runtime {
 // driven by Engine, owner (whether indirectly) of all game things.
-class Game : public IRuntime, public klib::Pinned {
+class Game : public IRuntime, public klib::Pinned, public animation::CollectibleProvider {
   public:
 	explicit Game(gsl::not_null<Engine*> engine);
+
+	[[nodiscard]] std::span<le::RenderInstance const> getCollectibles() const final {
+		return m_collectibles->getInstances();
+	}
 
   private:
 	// all Game-level input actions.

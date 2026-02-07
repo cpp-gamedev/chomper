@@ -7,10 +7,6 @@
 #include <le2d/render_instance.hpp>
 
 namespace chomper {
-namespace {
-constexpr auto headingToDir_v = klib::EnumArray<Heading, glm::ivec2>{glm::ivec2{1, 0}, glm::ivec2{0, 1}, glm::ivec2{-1, 0}, glm::ivec2{0, -1}};
-} // namespace
-
 Snake::Snake() {
 	le::RenderInstance instance{};
 	instance.tint = theme::snakeBodyColor_v;
